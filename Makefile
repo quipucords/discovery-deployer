@@ -1,14 +1,13 @@
 
-QPC_NAMESPACE = discovery
-QUAY_REGISTRY = quay.io
-CRC_SERVER    = api.crc.testing:6443
-QUAY_USER     ~= abellott
-QPC_IMAGE     = quipucords
-QPC_IMAGE_TAG ?= latest
-QUAY_REPO     = $(QUAY_USER)/$(QPC_IMAGE)
+DISCOVERY_NAMESPACE   = discovery
+QUAY_REGISTRY         = quay.io
+QUAY_USER             = $(error Please define QUAY_USER)
+CRC_SERVER            = api.crc.testing:6443
+QUIPUCORDS_IMAGE      = quipucords
+QUIPUCORDS_IMAGE_TAG  ?= latest
+DISCOVERY_SERVER_IMAGE = $(QUAY_REGISTRY)/$(QUAY_USER)/$(QUIPUCORDS_IMAGE):$(QUIPUCORDS_IMAGE_TAG)
 
-
-.PHONY: help init-ocp login-crc login-registry push deploy undeploy
+.PHONY: help login-crc init-ocp login-registry push deploy undeploy
 
 all: help
 
@@ -17,32 +16,35 @@ help:
 	@echo ""
 	@echo "where <target> is one of:"
 	@echo "  login-crc            - Logs in as developer to the $(CRC_SERVER)"
-	@echo "  init-ocp             - Creates new $(QPC_NAMESPACE) project in OpenShift/CRC"
+	@echo "  init-ocp             - Creates new $(DISCOVERY_NAMESPACE) project in OpenShift/CRC"
 	@echo "  login-registry       - Logs in to the registry $(QUAY_REGISTRY)"
-	@echo "  push                 - Pushes the quipucords build to $(QUAY_REGISTRY)/$(QUAY_REPO):$(QPC_IMAGE_TAG)"
-	@echo "  deploy               - Deploys Discovery to project $(QPC_NAMESPACE)"
-	@echo "  undeploy             - Un-Deploys Discovery from project $(QPC_NAMESPACE)"
+	@echo "  push                 - Pushes the quipucords build to $(QPC_REPO_IMAGE)"
+	@echo "  deploy               - Deploys Discovery to project $(DISCOVERY_NAMESPACE)"
+	@echo "  undeploy             - Un-Deploys Discovery from project $(DISCOVERY_NAMESPACE)"
+
+require-quay-user:
+	test $(QUAY_USER)
 
 login-crc:
-	oc login --username=developer --password=developer api.crc.testing:6443
+	oc login --username=developer --password=developer $(CRC_SERVER)
 
 init-ocp:
-	oc new-project $(QPC_NAMESPACE)
-	oc project $(QPC_NAMESPACE)
+	oc new-project $(DISCOVERY_NAMESPACE)
+	oc project $(DISCOVERY_NAMESPACE)
 
 login-registry:
 	docker login $(QUAY_REGISTRY)
 
 push:
-	docker push quipucords $(QUAY_REGISTRY)/$(QUAY_REPO):$(QPC_IMAGE_TAG)
+	docker push quipucords $(DISCOVERY_SERVER_IMAGE)
 
 deploy:
-	oc project $(QPC_NAMESPACE)
+	oc project $(DISCOVERY_NAMESPACE)
 	oc apply -f discovery_template.yaml
-	oc new-app --template=discovery
+	oc new-app --template=discovery --param=DISCOVERY_SERVER_IMAGE=$(DISCOVERY_SERVER_IMAGE)
 
 undeploy:
-	oc project $(QPC_NAMESPACE)
+	oc project $(DISCOVERY_NAMESPACE)
 # Deployments
 	oc delete --ignore-not-found=true deployment/discovery-celery-worker
 	oc delete --ignore-not-found=true deployment/discovery-quipucords
