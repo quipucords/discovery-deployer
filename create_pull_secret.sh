@@ -1,8 +1,8 @@
 #!/bin/bash
-export QUAY_REGISTRY="quay.io"
-export QPC_NAMESPACE="discovery"
-export QPC_PULL_SECRET="discovery-pull-secret"
-export QPC_PULL_SECRET_JSON="/tmp/qpc_pull_secret_$$.json"
+export QUAY_REGISTRY="${QUAY_REGISTRY:=quay.io}"
+export DISCOVERY_NAMESPACE="${DISCOVERY_NAMESPACE:=discovery}"
+export DISCOVERY_PULL_SECRET="discovery-pull-secret"
+export DISCOVERY_PULL_SECRET_JSON="/tmp/qpc_pull_secret_$$.json"
 
 
 if [ $# -ne 3 ]
@@ -28,29 +28,29 @@ CONFIG_JSON=`cat - <<!END!
 }
 !END!
 `
-echo "Creating the Discovery pull secret ${QPC_PULL_SECRET} ..."
+echo "Creating the Discovery pull secret ${DISCOVERY_PULL_SECRET} ..."
 
-echo ${CONFIG_JSON} > ${QPC_PULL_SECRET_JSON}
+echo ${CONFIG_JSON} > ${DISCOVERY_PULL_SECRET_JSON}
 
-if [ "$(oc get secrets -n ${QPC_NAMESPACE} | grep ${QPC_PULL_SECRET})" == "" ]
+if [ "$(oc get secrets -n ${DISCOVERY_NAMESPACE} | grep ${DISCOVERY_PULL_SECRET})" == "" ]
 then
-  oc create secret generic ${QPC_PULL_SECRET} --from-file=.dockerconfigjson=${QPC_PULL_SECRET_JSON} \
-    --type=kubernetes.io/dockerconfigjson -n ${QPC_NAMESPACE}
+  oc create secret generic ${DISCOVERY_PULL_SECRET} --from-file=.dockerconfigjson=${DISCOVERY_PULL_SECRET_JSON} \
+    --type=kubernetes.io/dockerconfigjson -n ${DISCOVERY_NAMESPACE}
 else
-  oc create secret generic ${QPC_PULL_SECRET} --from-file=.dockerconfigjson=${QPC_PULL_SECRET_JSON} \
-    --type=kubernetes.io/dockerconfigjson -n ${QPC_NAMESPACE} --dry-run=client -o yaml | oc replace -n ${QPC_NAMESPACE} -f -
+  oc create secret generic ${DISCOVERY_PULL_SECRET} --from-file=.dockerconfigjson=${DISCOVERY_PULL_SECRET_JSON} \
+    --type=kubernetes.io/dockerconfigjson -n ${DISCOVERY_NAMESPACE} --dry-run=client -o yaml | oc replace -n ${DISCOVERY_NAMESPACE} -f -
 fi
 
 # Zap the pull secret config json
-rm -f ${QPC_PULL_SECRET_JSON}
+rm -f ${DISCOVERY_PULL_SECRET_JSON}
 
 for sa in "default" "deployer"
 do
   oc get sa/${sa} >/dev/null 2>&1
   if [ $? -eq 0 ]
   then
-    echo "Add ${QPC_PULL_SECRET} to the ${sa} service_account ..."
-    oc secrets link ${sa}  ${QPC_PULL_SECRET} --for=pull
+    echo "Adding ${DISCOVERY_PULL_SECRET} to the ${sa} service_account ..."
+    oc secrets link ${sa}  ${DISCOVERY_PULL_SECRET} --for=pull
   fi
 done
 
