@@ -2,6 +2,8 @@
 DISCOVERY_NAMESPACE   = discovery
 QUAY_REGISTRY         = quay.io
 QUAY_USER             = $(error Please define QUAY_USER)
+QUAY_PASSWORD         = $(error Please define QUAY_PASSWORD)
+QUAY_EMAIL            = $(error Please define QUAY_EMAIL)
 CRC_SERVER            = api.crc.testing:6443
 QUIPUCORDS_IMAGE      = quipucords
 QUIPUCORDS_IMAGE_TAG  ?= latest
@@ -19,6 +21,8 @@ help:
 	@echo "  init-ocp             - Creates new $(DISCOVERY_NAMESPACE) project in OpenShift/CRC"
 	@echo "  login-registry       - Logs in to the registry $(QUAY_REGISTRY)"
 	@echo "  push                 - Pushes the quipucords build to $(QPC_REPO_IMAGE)"
+	@echo "  create-pull-secret   - Creates the discovery-pull-secret in project $(DISCOVERY_NAMESPACE)"
+	@echo "                         make create-pull-secret QUAY_USER=... QUAY_PASSWORD=... QUAY_EMAIL=..."
 	@echo "  deploy               - Deploys Discovery to project $(DISCOVERY_NAMESPACE)"
 	@echo "  undeploy             - Un-Deploys Discovery from project $(DISCOVERY_NAMESPACE)"
 
@@ -37,6 +41,9 @@ login-registry:
 
 push:
 	docker push quipucords $(DISCOVERY_SERVER_IMAGE)
+
+create-pull-secret:
+	QUAY_REGISTRY=$(QUAY_REGISTRY) DISCOVERY_NAMESPACE=$(DISCOVERY_NAMESPACE) ./create_pull_secret.sh $(QUAY_USER) $(QUAY_PASSWORD) $(QUAY_EMAIL)
 
 deploy:
 	oc project $(DISCOVERY_NAMESPACE)
