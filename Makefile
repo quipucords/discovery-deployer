@@ -16,19 +16,18 @@ help:
 	@echo "Usage: make <target>"
 	@echo ""
 	@echo "where <target> is one of:"
-	@echo "  init-ocp             - Creates new $(QPC_NAMESPACE) project in OpenShift/CRC"
 	@echo "  login-crc            - Logs in as developer to the $(CRC_SERVER)"
+	@echo "  init-ocp             - Creates new $(QPC_NAMESPACE) project in OpenShift/CRC"
 	@echo "  login-registry       - Logs in to the registry $(QUAY_REGISTRY)"
 	@echo "  push                 - Pushes the quipucords build to $(QUAY_REGISTRY)/$(QUAY_REPO):$(QPC_IMAGE_TAG)"
 	@echo "  deploy               - Deploys Discovery to project $(QPC_NAMESPACE)"
 	@echo "  undeploy             - Un-Deploys Discovery from project $(QPC_NAMESPACE)"
 
-init-ocp:
-	oc new-project $(QPC_NAMESPACE)
-	oc project $(QPC_NAMESPACE)
-
 login-crc:
 	oc login --username=developer --password=developer api.crc.testing:6443
+
+init-ocp:
+	oc new-project $(QPC_NAMESPACE)
 	oc project $(QPC_NAMESPACE)
 
 login-registry:
