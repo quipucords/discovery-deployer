@@ -20,9 +20,7 @@ help:
 	@echo "  login-crc            - Logs in as developer to the $(CRC_SERVER)"
 	@echo "  init-ocp             - Creates new $(DISCOVERY_NAMESPACE) project in OpenShift/CRC"
 	@echo "  login-registry       - Logs in to the registry $(QUAY_REGISTRY)"
-	@echo "  push                 - Pushes the quipucords build to $(QPC_REPO_IMAGE)"
-	@echo "  create-pull-secret   - Creates the discovery-pull-secret in project $(DISCOVERY_NAMESPACE)"
-	@echo "                         make create-pull-secret QUAY_USER=... QUAY_PASSWORD=... QUAY_EMAIL=..."
+	@echo "  push                 - Pushes the quipucords build to $(QUAY_REGISTRY)"
 	@echo "  deploy               - Deploys Discovery to project $(DISCOVERY_NAMESPACE)"
 	@echo "  undeploy             - Un-Deploys Discovery from project $(DISCOVERY_NAMESPACE)"
 
