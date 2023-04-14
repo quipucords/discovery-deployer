@@ -1,2 +1,2 @@
 # discovery-deployer
-Deployment scripts and templates for the Discovery product
+Scripts and templates for deploying the Discovery product to OpenShift.
