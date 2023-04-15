@@ -47,7 +47,7 @@ objects:
     namespace: discovery
   spec:
     selector:
-      app: discovery-quipucords
+      app: discovery-server
     ports:
     - port: ${{DISCOVERY_SERVER_PORT}}
       protocol: TCP
@@ -95,7 +95,6 @@ objects:
     namespace: discovery
   spec:
     host: ${DISCOVERY_SERVER_HOSTNAME}
-    path: /
     port:
       targetPort: ${{DISCOVERY_SERVER_PORT}}
     to:
@@ -111,23 +110,23 @@ objects:
 - apiVersion: apps/v1
   kind: Deployment
   metadata:
-    name: discovery-quipucords
+    name: discovery-server
     namespace: discovery
   spec:
     replicas: 1
     selector:
       matchLabels:
-        app: discovery-quipucords
+        app: discovery-server
     strategy:
       type: Recreate
     template:
       metadata:
         labels:
-          app: discovery-quipucords
-          deployment: discovery
+          app: discovery-server
+          deployment: discovery-server
       spec:
         containers:
-          - name: discovery-quipucords
+          - name: discovery-server
             image: ${DISCOVERY_SERVER_IMAGE}
             imagePullPolicy: Always
             serviceAccount: discovery-sa
@@ -141,7 +140,7 @@ objects:
               - /bin/bash
               - '-c'
               - make server-migrate server-set-superuser -C /app &&
-                python quipucords/manage.py runserver --nostatic
+                python quipucords/manage.py runserver --nostatic ${DISCOVERY_SERVER_PORT}
             securityContext:
               runAsNonRoot: true
               allowPrivilegeEscalation: false
@@ -334,7 +333,7 @@ objects:
       metadata:
         labels:
           app: discovery-redis
-          deployment: quipucords-redis
+          deployment: discovery-redis
       spec:
         containers:
           - name: discovery-redis
@@ -376,7 +375,7 @@ parameters:
 - name: DISCOVERY_SERVER_HOSTNAME
   displayName: Discovery Server Server Host Name
   description: This is the external host name of the Discovery server.
-  value: "discovery-server.apps-crc.testing"
+  value: "discovery-server-discovery.apps-crc.testing"
 - name: DISCOVERY_SERVER_PORT
   displayName: Discovery Server Port (API/UI)
   description: This is the port for the quipucords server.
