@@ -14,7 +14,7 @@ objects:
   imagePullSecrets:
   - name: discovery-pull-secret
   metadata:
-    name: discovery-sa
+    name: ${DISCOVERY_SA_NAME}
     namespace: discovery
 - apiVersion: v1
   kind: PersistentVolumeClaim
@@ -132,8 +132,8 @@ objects:
           - name: discovery-server
             image: ${DISCOVERY_SERVER_IMAGE}
             imagePullPolicy: Always
-            serviceAccount: discovery-sa
-            serviceAccountName: discovery-sa
+            serviceAccount: ${DISCOVERY_SA_NAME}
+            serviceAccountName: ${DISCOVERY_SA_NAME}
             ports:
               - containerPort: ${{DISCOVERY_SERVER_PORT}}
                 protocol: TCP
@@ -223,8 +223,8 @@ objects:
           - name: discovery-celery-worker
             image: ${DISCOVERY_SERVER_IMAGE}
             imagePullPolicy: Always
-            serviceAccount: discovery-sa
-            serviceAccountName: discovery-sa
+            serviceAccount: ${DISCOVERY_SA_NAME}
+            serviceAccountName: ${DISCOVERY_SA_NAME}
             command: [ "/bin/sh", "-c", "/deploy/entrypoint_celery_worker.sh" ]
             securityContext:
               runAsNonRoot: true
@@ -281,8 +281,8 @@ objects:
           - name: discovery-db
             image: registry.redhat.io/rhel8/postgresql-12
             imagePullPolicy: Always
-            serviceAccount: discovery-sa
-            serviceAccountName: discovery-sa
+            serviceAccount: ${DISCOVERY_SA_NAME}
+            serviceAccountName: ${DISCOVERY_SA_NAME}
             securityContext:
               runAsNonRoot: true
               allowPrivilegeEscalation: false
@@ -342,8 +342,8 @@ objects:
           - name: discovery-redis
             image: registry.redhat.io/rhel9/redis-6
             imagePullPolicy: Always
-            serviceAccount: discovery-sa
-            serviceAccountName: discovery-sa
+            serviceAccount: ${DISCOVERY_SA_NAME}
+            serviceAccountName: ${DISCOVERY_SA_NAME}
             securityContext:
               runAsNonRoot: true
               allowPrivilegeEscalation: false
@@ -371,6 +371,10 @@ parameters:
   displayName: Container image for the Discovery server.
   description: This is the image for the Discovery server.
   value: "quay.io/abellott/quipucords:latest"
+- name: DISCOVERY_SA_NAME
+  displayName: Discovery Service Account Name
+  description: This is the name for the Discovery Service Account.
+  value: "discovery-sa"
 - name: DISCOVERY_CELERY_WORKER_MINIMUM_REPLICA_COUNT
   displayName: Discovery Celery Worker Minimum Replica Count
   description: This is the starting number of Celery workers replicas requested.
