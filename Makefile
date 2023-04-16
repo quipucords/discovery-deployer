@@ -52,7 +52,7 @@ undeploy:
 	oc project $(DISCOVERY_NAMESPACE)
 # Deployments
 	oc delete --ignore-not-found=true deployment/discovery-celery-worker
-	oc delete --ignore-not-found=true deployment/discovery-quipucords
+	oc delete --ignore-not-found=true deployment/discovery-server
 	oc delete --ignore-not-found=true deployment/discovery-db
 	oc delete --ignore-not-found=true deployment/discovery-redis
 # Services
