@@ -48,6 +48,7 @@ objects:
   spec:
     selector:
       app: discovery-server
+      deployment: discovery-server
     ports:
     - port: ${{DISCOVERY_SERVER_PORT}}
       protocol: TCP
