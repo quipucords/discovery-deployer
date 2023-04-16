@@ -65,6 +65,7 @@ objects:
   spec:
     selector:
       app: discovery-redis
+      deployment: discovery-redis
     ports:
     - port: ${{DISCOVERY_REDIS_PORT}}
       protocol: TCP
@@ -81,6 +82,7 @@ objects:
   spec:
     selector:
       app: discovery-db
+      deployment: discovery-db
     ports:
     - port: ${{DISCOVERY_DBMS_PORT}}
       protocol: TCP
@@ -95,7 +97,7 @@ objects:
     name: discovery-server
     namespace: discovery
   spec:
-    host: ${DISCOVERY_SERVER_HOSTNAME}
+    host: ${DISCOVERY_SERVER_EXTERNAL_HOSTNAME}
     port:
       targetPort: ${{DISCOVERY_SERVER_PORT}}
     to:
@@ -106,7 +108,7 @@ objects:
   status:
     ingress:
     - conditions:
-      host: ${DISCOVERY_SERVER_HOSTNAME}
+      host: ${DISCOVERY_SERVER_EXTERNAL_HOSTNAME}
       wildcardPolicy: None
 - apiVersion: apps/v1
   kind: Deployment
@@ -166,7 +168,7 @@ objects:
               - name: QPC_DBMS_DATABASE
                 value: "qpc"
               - name: QPC_DBMS_HOST
-                value: "${DISCOVERY_DBMS_HOSTNAME}"
+                value: "${DISCOVERY_DBMS_CLUSTER_HOSTNAME}"
               - name: QPC_DBMS_PASSWORD
                 value: "qpc"
               - name: QPC_DBMS_PORT
@@ -184,7 +186,7 @@ objects:
               - name: QPC_LOG_ALL_ENV_VARS_AT_STARTUP
                 value: "False"
               - name: REDIS_HOST
-                value: "${DISCOVERY_REDIS_HOSTNAME}"
+                value: "${DISCOVERY_REDIS_CLUSTER_HOSTNAME}"
               - name: REDIS_PASSWORD
                 value: "qpc"
         imagePullSecrets:
@@ -242,7 +244,7 @@ objects:
               - name: DJANGO_SECRET_PATH
                 value: "${DJANGO_SECRET_PATH}"
               - name: REDIS_HOST
-                value: "${DISCOVERY_REDIS_HOSTNAME}"
+                value: "${DISCOVERY_REDIS_CLUSTER_HOSTNAME}"
               - name: REDIS_PASSWORD
                 value: "qpc"
         imagePullSecrets:
@@ -373,25 +375,29 @@ parameters:
   displayName: Discovery Celery Worker Minimum Replica Count
   description: This is the starting number of Celery workers replicas requested.
   value: '3'
-- name: DISCOVERY_SERVER_HOSTNAME
-  displayName: Discovery Server Server Host Name
+- name: DISCOVERY_SERVER_EXTERNAL_HOSTNAME
+  displayName: Discovery Server Host Name
   description: This is the external host name of the Discovery server.
   value: "discovery-server-discovery.apps-crc.testing"
+- name: DISCOVERY_SERVER_CLUSTER_HOSTNAME
+  displayName: Discovery Server Cluster Host Name
+  description: This is the internal host name of the Discovery server.
+  value: "discovery-server.discovery.svc.cluster.local"
 - name: DISCOVERY_SERVER_PORT
   displayName: Discovery Server Port (API/UI)
   description: This is the port for the quipucords server.
   value: "8000"
-- name: DISCOVERY_REDIS_HOSTNAME
-  displayName: Discovery Redis Server Host Name
-  description: This is the external host name of the Discovery Redis Server.
+- name: DISCOVERY_REDIS_CLUSTER_HOSTNAME
+  displayName: Discovery Redis Server Cluster Host Name
+  description: This is the internal host name of the Discovery Redis Server.
   value: "discovery-redis.discovery.svc.cluster.local"
 - name: DISCOVERY_REDIS_PORT
   displayName: Discovery Redis Port
   description: This is the port for the quipucords redis server.
   value: "6379"
-- name: DISCOVERY_DBMS_HOSTNAME
-  displayName: Discovery PostgresQL Server Host Name
-  description: This is the external host name of the Discovery database.
+- name: DISCOVERY_DBMS_CLUSTER_HOSTNAME
+  displayName: Discovery PostgresQL Server Cluster Host Name
+  description: This is the internal host name of the Discovery PostgreSQL database.
   value: "discovery-db.discovery.svc.cluster.local"
 - name: DISCOVERY_DBMS_PORT
   displayName: Discovery PostgresQL Database Port
