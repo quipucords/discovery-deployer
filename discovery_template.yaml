@@ -100,6 +100,9 @@ objects:
     host: ${DISCOVERY_SERVER_EXTERNAL_HOSTNAME}
     port:
       targetPort: ${{DISCOVERY_SERVER_PORT}}
+    tls:
+      termination: passthrough
+      insecureEdgeTerminationPolicy: None
     to:
       kind: Service
       name: discovery-server
@@ -385,9 +388,9 @@ parameters:
   description: This is the internal host name of the Discovery server.
   value: "discovery-server.discovery.svc.cluster.local"
 - name: DISCOVERY_SERVER_PORT
-  displayName: Discovery Server Port (API/UI)
-  description: This is the port for the quipucords server.
-  value: "8000"
+  displayName: Discovery Server SSL Port (API/UI)
+  description: This is the SSL port for the quipucords server.
+  value: "8443"
 - name: DISCOVERY_REDIS_CLUSTER_HOSTNAME
   displayName: Discovery Redis Server Cluster Host Name
   description: This is the internal host name of the Discovery Redis Server.
