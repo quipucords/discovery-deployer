@@ -139,11 +139,6 @@ objects:
                 protocol: TCP
               - containerPort: 5678
                 protocol: TCP
-            command:
-              - /bin/bash
-              - '-c'
-              - make server-migrate server-set-superuser -C /app &&
-                python quipucords/manage.py runserver --nostatic ${DISCOVERY_SERVER_PORT}
             securityContext:
               runAsNonRoot: true
               allowPrivilegeEscalation: false
@@ -175,6 +170,8 @@ objects:
                 value: "${DISCOVERY_DBMS_PORT}"
               - name: QPC_DBMS_USER
                 value: "qpc"
+              - name: QPC_SERVER_PORT
+                value: "${DISCOVERY_SERVER_PORT}"
               - name: QPC_SERVER_TIMEOUT
                 value: "5"
               - name: NETWORK_CONNECT_JOB_TIMEOUT
