@@ -152,9 +152,11 @@ objects:
               name: discovery-data-volume-claim
             - mountPath: /var/log
               name: discovery-log-volume-claim
-            - mountPath: /.ansible
-              name: discovery-data-volume-claim
             env:
+              - name: ANSIBLE_REMOTE_TMP
+                value: "${ANSIBLE_REMOTE_TMP}"
+              - name: ANSIBLE_LOCAL_TEMP
+                value: "${ANSIBLE_LOCAL_TEMP}"
               - name: ANSIBLE_LOG_LEVEL
                 value: "3"
               - name: DJANGO_SECRET_PATH
@@ -236,9 +238,11 @@ objects:
               name: discovery-data-volume-claim
             - mountPath: /var/log
               name: discovery-log-volume-claim
-            - mountPath: /.ansible
-              name: discovery-data-volume-claim
             env:
+              - name: ANSIBLE_REMOTE_TMP
+                value: "${ANSIBLE_REMOTE_TMP}"
+              - name: ANSIBLE_LOCAL_TEMP
+                value: "${ANSIBLE_LOCAL_TEMP}"
               - name: DJANGO_SECRET_PATH
                 value: "${DJANGO_SECRET_PATH}"
               - name: REDIS_HOST
@@ -361,6 +365,14 @@ objects:
     triggers:
     - type: ConfigChange
 parameters:
+- name: ANSIBLE_REMOTE_TMP
+  displayName: Path for the Ansible Remote Temp directory.
+  description: This is the path for the ansible remote temp directory (overrides /.ansible/tmp).
+  value: "/var/data/tmp/ansible/remote"
+- name: ANSIBLE_LOCAL_TEMP
+  displayName: Path for the Ansible Local Temp directory.
+  description: This is the path for the ansible temp directory (overrides /.ansible/tmp).
+  value: "/var/data/tmp/ansible/local"
 - name: DJANGO_SECRET_PATH
   displayName: Path for the Django secret
   description: This is the path for the Django secret
