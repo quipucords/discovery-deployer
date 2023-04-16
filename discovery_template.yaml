@@ -140,8 +140,6 @@ objects:
             ports:
               - containerPort: ${{DISCOVERY_SERVER_PORT}}
                 protocol: TCP
-              - containerPort: 5678
-                protocol: TCP
             securityContext:
               runAsNonRoot: true
               allowPrivilegeEscalation: false
