@@ -1,12 +1,28 @@
 # Discovery Deployer
-Scripts and templates for deploying the Discovery product to OpenShift.
+Script and template for deploying the Discovery product to OpenShift.
+
+```
+discodeploy [--help] [--deploy | --create-pull-secret | --undeploy]
+```
 
 run:
 
 ```
-make
+$ discodeploy --help
 ```
 
-To see the different deployment commands available.
+To see the additional help for running the command.
+
+Primary usage to deploy Discovery to OpenShift:
+
+```
+$ discodeploy --deploy
+```
+
+And to undeploy Discovery from OepnShift:
+
+```
+$ discodeploy --undeploy
+```
 
 Also, best to visit the [Discovery Deployer Wiki](https://github.com/abellotti/discovery-deployer/wiki) pages for more complete and up to date documentation.
