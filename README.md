@@ -1,4 +1,4 @@
-# Discovery Deployer
+# Quipucords Deployer
 Script and template for deploying the Discovery product to OpenShift.
 
 ```
@@ -25,4 +25,4 @@ And to undeploy Discovery from OepnShift:
 $ discodeploy --undeploy
 ```
 
-Also, best to visit the [Discovery Deployer Wiki](https://github.com/quipucords/discovery-deployer/wiki) pages for more complete and up to date documentation.
+Also, best to visit the [Quipucords Deployer Wiki](https://github.com/quipucords/quipucords-deployer/wiki) pages for more detailed documentation.
