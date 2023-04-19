@@ -25,4 +25,4 @@ And to undeploy Discovery from OepnShift:
 $ discodeploy --undeploy
 ```
 
-Also, best to visit the [Discovery Deployer Wiki](https://github.com/abellotti/discovery-deployer/wiki) pages for more complete and up to date documentation.
+Also, best to visit the [Discovery Deployer Wiki](https://github.com/quipucords/discovery-deployer/wiki) pages for more complete and up to date documentation.
