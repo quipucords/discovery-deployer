@@ -4,7 +4,6 @@ labels:
   template: discovery
 metadata:
   name: discovery
-  namespace: discovery
   annotations:
     description: The Discovery Server application
     tags: discovery
@@ -15,12 +14,10 @@ objects:
   - name: discovery-pull-secret
   metadata:
     name: ${DISCOVERY_SA_NAME}
-    namespace: discovery
 - apiVersion: v1
   kind: PersistentVolumeClaim
   metadata:
     name: discovery-data-volume-claim
-    namespace: discovery
   spec:
     accessModes:
     - ReadWriteMany
@@ -32,7 +29,6 @@ objects:
   kind: PersistentVolumeClaim
   metadata:
     name: discovery-log-volume-claim
-    namespace: discovery
   spec:
     accessModes:
     - ReadWriteMany
@@ -44,7 +40,6 @@ objects:
   kind: Service
   metadata:
     name: discovery-server
-    namespace: discovery
   spec:
     selector:
       app: discovery-server
@@ -61,7 +56,6 @@ objects:
   kind: Service
   metadata:
     name: discovery-redis
-    namespace: discovery
   spec:
     selector:
       app: discovery-redis
@@ -78,7 +72,6 @@ objects:
   kind: Service
   metadata:
     name: discovery-db
-    namespace: discovery
   spec:
     selector:
       app: discovery-db
@@ -95,9 +88,8 @@ objects:
   kind: Route
   metadata:
     name: discovery-server
-    namespace: discovery
   spec:
-    host: ${DISCOVERY_SERVER_EXTERNAL_HOSTNAME}
+    host: ${APPLICATION_DOMAIN}
     port:
       targetPort: ${{DISCOVERY_SERVER_PORT}}
     tls:
@@ -111,13 +103,12 @@ objects:
   status:
     ingress:
     - conditions:
-      host: ${DISCOVERY_SERVER_EXTERNAL_HOSTNAME}
+      host: ${APPLICATION_DOMAIN}
       wildcardPolicy: None
 - apiVersion: apps/v1
   kind: Deployment
   metadata:
     name: discovery-server
-    namespace: discovery
   spec:
     replicas: 1
     selector:
@@ -229,7 +220,6 @@ objects:
   kind: Deployment
   metadata:
     name: discovery-celery-worker
-    namespace: discovery
   spec:
     replicas: "${{DISCOVERY_CELERY_WORKER_MINIMUM_REPLICA_COUNT}}"
     selector:
@@ -289,7 +279,6 @@ objects:
   kind: Deployment
   metadata:
     name: discovery-db
-    namespace: discovery
   spec:
     replicas: 1
     selector:
@@ -350,7 +339,6 @@ objects:
   kind: Deployment
   metadata:
     name: discovery-redis
-    namespace: discovery
   spec:
     replicas: 1
     selector:
@@ -405,6 +393,10 @@ objects:
     triggers:
     - type: ConfigChange
 parameters:
+- name: APPLICATION_DOMAIN
+  displayName: Application Hostname
+  description: This is the externally accessible URL for the Discovery server.
+  value: "discovery-server-discovery.apps-crc.testing"
 - name: ANSIBLE_REMOTE_TMP
   displayName: Path for the Ansible Remote Temp directory.
   description: This is the path for the ansible remote temp directory (overrides /.ansible/tmp).
@@ -429,10 +421,6 @@ parameters:
   displayName: Discovery Celery Worker Minimum Replica Count
   description: This is the starting number of Celery workers replicas requested.
   value: '3'
-- name: DISCOVERY_SERVER_EXTERNAL_HOSTNAME
-  displayName: Discovery Server Host Name
-  description: This is the external host name of the Discovery server.
-  value: "discovery-server-discovery.apps-crc.testing"
 - name: DISCOVERY_SERVER_CLUSTER_HOSTNAME
   displayName: Discovery Server Cluster Host Name
   description: This is the internal host name of the Discovery server.
