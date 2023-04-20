@@ -24,7 +24,7 @@ objects:
     volumeMode: Filesystem
     resources:
       requests:
-        storage: 32Gi
+        storage: 8Gi
 - apiVersion: v1
   kind: PersistentVolumeClaim
   metadata:
@@ -35,7 +35,7 @@ objects:
     volumeMode: Filesystem
     resources:
       requests:
-        storage: 16Gi
+        storage: 4Gi
 - apiVersion: v1
   kind: Service
   metadata:
@@ -306,7 +306,7 @@ objects:
               seccompProfile:
                 type: "RuntimeDefault"
             volumeMounts:
-            - mountPath: /var/lib/psql/data
+            - mountPath: /var/lib/pgsql/data
               name: discovery-data-volume-claim
             ports:
               - containerPort: ${{DISCOVERY_DBMS_PORT}}
