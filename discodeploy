@@ -157,17 +157,10 @@ function cmd_deploy {
     cmd_create_pull_secret
   fi
   cmdexec oc apply -f discovery_template.yaml
-
-  # namespace dependent parameters:
-  DISCOVERY_SERVER_CLUSTER_HOSTNAME="discovery-server.${DISCOVERY_NAMESPACE}.svc.cluster.local"
-  DISCOVERY_REDIS_CLUSTER_HOSTNAME="discovery-redis.${DISCOVERY_NAMESPACE}.svc.cluster.local"
-  DISCOVERY_DBMS_CLUSTER_HOSTNAME="discovery-db.${DISCOVERY_NAMESPACE}.svc.cluster.local"
-
-  cmdexec oc new-app --template=discovery --param=DISCOVERY_SERVER_IMAGE="${DISCOVERY_SERVER_IMAGE}" \
-    --param=APPLICATION_DOMAIN="${APPLICATION_DOMAIN}" \
-    --param=DISCOVERY_SERVER_CLUSTER_HOSTNAME="${DISCOVERY_SERVER_CLUSTER_HOSTNAME}" \
-    --param=DISCOVERY_REDIS_CLUSTER_HOSTNAME="${DISCOVERY_REDIS_CLUSTER_HOSTNAME}" \
-    --param=DISCOVERY_DBMS_CLUSTER_HOSTNAME="${DISCOVERY_DBMS_CLUSTER_HOSTNAME}"
+  cmdexec oc new-app --template=discovery \
+    --param=DISCOVERY_SERVER_IMAGE="${DISCOVERY_SERVER_IMAGE}" \
+    --param=DISCOVERY_NAMESPACE=${DISCOVERY_NAMESPACE} \
+    --param=APPLICATION_DOMAIN="${APPLICATION_DOMAIN}"
 }
 
 function cmd_undeploy {

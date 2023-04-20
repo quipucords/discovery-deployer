@@ -156,7 +156,7 @@ objects:
                 scheme: HTTPS
                 httpHeaders:
                   - name: Host
-                    value: ${DISCOVERY_SERVER_CLUSTER_HOSTNAME}
+                    value: "discovery-server.${DISCOVERY_NAMESPACE}.svc.cluster.local"
               failureThreshold: 5
               initialDelaySeconds: 10
               periodSeconds: 10
@@ -181,7 +181,7 @@ objects:
               - name: QPC_DBMS_DATABASE
                 value: "qpc"
               - name: QPC_DBMS_HOST
-                value: "${DISCOVERY_DBMS_CLUSTER_HOSTNAME}"
+                value: "discovery-db.${DISCOVERY_NAMESPACE}.svc.cluster.local"
               - name: QPC_DBMS_PASSWORD
                 value: "qpc"
               - name: QPC_DBMS_PORT
@@ -201,7 +201,7 @@ objects:
               - name: QPC_LOG_ALL_ENV_VARS_AT_STARTUP
                 value: "False"
               - name: REDIS_HOST
-                value: "${DISCOVERY_REDIS_CLUSTER_HOSTNAME}"
+                value: "discovery-redis.${DISCOVERY_NAMESPACE}.svc.cluster.local"
               - name: REDIS_PASSWORD
                 value: "qpc"
         imagePullSecrets:
@@ -260,7 +260,7 @@ objects:
               - name: DJANGO_SECRET_PATH
                 value: "${DJANGO_SECRET_PATH}"
               - name: REDIS_HOST
-                value: "${DISCOVERY_REDIS_CLUSTER_HOSTNAME}"
+                value: "discovery-redis.${DISCOVERY_NAMESPACE}.svc.cluster.local"
               - name: REDIS_PASSWORD
                 value: "qpc"
         imagePullSecrets:
@@ -393,6 +393,10 @@ objects:
     triggers:
     - type: ConfigChange
 parameters:
+- name: DISCOVERY_NAMESPACE
+  displayName: Discovery Project namespace
+  description: This is the OpenShift project namespace where Discovery is getting installed.
+  value: "discovery"
 - name: APPLICATION_DOMAIN
   displayName: Application Hostname
   description: This is the externally accessible URL for the Discovery server.
@@ -412,7 +416,7 @@ parameters:
 - name: DISCOVERY_SERVER_IMAGE
   displayName: Container image for the Discovery server.
   description: This is the image for the Discovery server.
-  value: "quay.io/abellott/quipucords:latest"
+  value: "quay.io/quipucords/quipucords:latest"
 - name: DISCOVERY_SA_NAME
   displayName: Discovery Service Account Name
   description: This is the name for the Discovery Service Account.
@@ -421,26 +425,14 @@ parameters:
   displayName: Discovery Celery Worker Minimum Replica Count
   description: This is the starting number of Celery workers replicas requested.
   value: '3'
-- name: DISCOVERY_SERVER_CLUSTER_HOSTNAME
-  displayName: Discovery Server Cluster Host Name
-  description: This is the internal host name of the Discovery server.
-  value: "discovery-server.discovery.svc.cluster.local"
 - name: DISCOVERY_SERVER_PORT
   displayName: Discovery Server SSL Port (API/UI)
   description: This is the SSL port for the quipucords server.
   value: "8443"
-- name: DISCOVERY_REDIS_CLUSTER_HOSTNAME
-  displayName: Discovery Redis Server Cluster Host Name
-  description: This is the internal host name of the Discovery Redis Server.
-  value: "discovery-redis.discovery.svc.cluster.local"
 - name: DISCOVERY_REDIS_PORT
   displayName: Discovery Redis Port
   description: This is the port for the quipucords redis server.
   value: "6379"
-- name: DISCOVERY_DBMS_CLUSTER_HOSTNAME
-  displayName: Discovery PostgresQL Server Cluster Host Name
-  description: This is the internal host name of the Discovery PostgreSQL database.
-  value: "discovery-db.discovery.svc.cluster.local"
 - name: DISCOVERY_DBMS_PORT
   displayName: Discovery PostgresQL Database Port
   description: This is the port for the quipucords postgresql database.
