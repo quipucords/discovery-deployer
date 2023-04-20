@@ -13,7 +13,7 @@ export DISCOVERY_NAMESPACE="${DISCOVERY_NAMESPACE:=discovery}"
 
 export DISCOVERY_REGISTRY="${DISCOVERY_REGISTRY:=quay.io}"
 export REGISTRY_USER="${REGISTRY_USER:=quay_user}"
-export REGISTRY_PASSWORD="${REGISTRY_PASSWORD:=quay_password}"
+export REGISTRY_PASSWORD="${REGISTRY_PASSWORD:=}"
 export REGISTRY_EMAIL="${REGISTRY_EMAIL:=quay_user@redhat.com}"
 
 export QUIPUCORDS_IMAGE="quipucords"
@@ -33,7 +33,7 @@ function cmdexec {
 function varupd {
   var="$(echo $1 | tr '[a-z]' '[A-Z]')"
   if [[ "${var}" == *"PASS"* ]]; then
-    echo -n "${var} (********): "
+    echo -n "${var} ($(echo ${!var} | sed 's/./*/g')): "
     read -s value
     echo ""
   else
@@ -58,6 +58,8 @@ function get_env_deploy {
   varupd OCP_USER
   varupd OCP_PASSWORD
   varupd DISCOVERY_NAMESPACE
+  export APPLICATION_DOMAIN="discovery-server-${DISCOVERY_NAMESPACE}.apps-crc.testing"
+  varupd APPLICATION_DOMAIN
   varupd DISCOVERY_REGISTRY
   varupd QUIPUCORDS_IMAGE_TAG
   varupd REGISTRY_USER
@@ -155,7 +157,10 @@ function cmd_deploy {
     cmd_create_pull_secret
   fi
   cmdexec oc apply -f discovery_template.yaml
-  cmdexec oc new-app --template=discovery --param=DISCOVERY_SERVER_IMAGE="${DISCOVERY_SERVER_IMAGE}"
+  cmdexec oc new-app --template=discovery \
+    --param=DISCOVERY_SERVER_IMAGE="${DISCOVERY_SERVER_IMAGE}" \
+    --param=DISCOVERY_NAMESPACE=${DISCOVERY_NAMESPACE} \
+    --param=APPLICATION_DOMAIN="${APPLICATION_DOMAIN}"
 }
 
 function cmd_undeploy {
@@ -233,10 +238,11 @@ Environment variables that are honored and prompted for (defaults):
     OCP_USER                   (developer)
     OCP_PASSWORD               (developer)
     DISCOVERY_NAMESPACE        (discovery)
+    APPLICATION_DOMAIN         (discovery-server-discovery.apps-crc.testing)
  
     DISCOVERY_REGISTRY         (quay.io)
     REGISTRY_USER              (quay_user)
-    REGISTRY_PASSWORD          (quay_password)
+    REGISTRY_PASSWORD          ()
     REGISTRY_EMAIL             (quay_user@redhat.com)
  
     QUIPUCORDS_IMAGE_TAG       (latest)
