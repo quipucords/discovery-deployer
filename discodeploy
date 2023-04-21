@@ -14,7 +14,7 @@ export DISCOVERY_NAMESPACE="${DISCOVERY_NAMESPACE:=discovery}"
 export DISCOVERY_REGISTRY="${DISCOVERY_REGISTRY:=quay.io}"
 export REGISTRY_USER="${REGISTRY_USER:=quay_user}"
 export REGISTRY_PASSWORD="${REGISTRY_PASSWORD:=}"
-export REGISTRY_EMAIL="${REGISTRY_EMAIL:=quay_user@redhat.com}"
+export REGISTRY_EMAIL="${REGISTRY_EMAIL:=}"
 
 export QUIPUCORDS_IMAGE="quipucords"
 export QUIPUCORDS_IMAGE_TAG="${QUIPUCORDS_IMAGE_TAG:=latest}"
@@ -43,6 +43,13 @@ function varupd {
   [[ -n "${value}" ]] && export ${1}="${value}"
 }
 
+function default_registry_email {
+  if [ -z "${REGISTRY_EMAIL}" ]
+  then
+    export REGISTRY_EMAIL="${REGISTRY_USER}@redhat.com"
+  fi
+}
+
 function get_env_create_pull_secret {
   varupd OCP_SERVER
   varupd OCP_USER
@@ -50,6 +57,7 @@ function get_env_create_pull_secret {
   varupd DISCOVERY_NAMESPACE
   varupd REGISTRY_USER
   varupd REGISTRY_PASSWORD
+  default_registry_email
   varupd REGISTRY_EMAIL
 }
 
@@ -63,9 +71,16 @@ function get_env_deploy {
   varupd DISCOVERY_REGISTRY
   varupd QUIPUCORDS_IMAGE_TAG
   varupd REGISTRY_USER
+  export REGISTRY_BASE="${DISCOVERY_REGISTRY}/${REGISTRY_USER}"
+  varupd REGISTRY_BASE
+  export DISCOVERY_SERVER_IMAGE="${REGISTRY_BASE}/${QUIPUCORDS_IMAGE}:${QUIPUCORDS_IMAGE_TAG}"
+  varupd DISCOVERY_SERVER_IMAGE
 }
 
 function get_env_undeploy {
+  varupd OCP_SERVER
+  varupd OCP_USER
+  varupd OCP_PASSWORD
   varupd DISCOVERY_NAMESPACE
 }
 
@@ -124,9 +139,6 @@ function cmd_create_pull_secret {
 }
 
 function cmd_deploy {
-  # Requirement: the DISCOVERY_SERVER_IMAGE container image is already built and pushed to the registry.
-  export DISCOVERY_SERVER_IMAGE="${DISCOVERY_REGISTRY}/${REGISTRY_USER}/${QUIPUCORDS_IMAGE}:${QUIPUCORDS_IMAGE_TAG}"
-
   # Let's confirm stuff ...
   echo ""
   echo "About to deploy Discovery image \"${DISCOVERY_SERVER_IMAGE}\" to \"${OCP_SERVER}\""
@@ -152,8 +164,11 @@ function cmd_deploy {
   # let's ask for the password and email and create one.
   if [ "`discovery_pull_secret_exists`" == "no" ]
   then
+    echo ""
     varupd REGISTRY_PASSWORD
+    default_registry_email
     varupd REGISTRY_EMAIL
+    echo ""
     cmd_create_pull_secret
   fi
   cmdexec oc apply -f discovery_template.yaml
@@ -161,6 +176,9 @@ function cmd_deploy {
     --param=DISCOVERY_SERVER_IMAGE="${DISCOVERY_SERVER_IMAGE}" \
     --param=DISCOVERY_NAMESPACE=${DISCOVERY_NAMESPACE} \
     --param=APPLICATION_DOMAIN="${APPLICATION_DOMAIN}"
+
+  echo ""
+  echo "Application Url: https://${APPLICATION_DOMAIN}"
 }
 
 function cmd_undeploy {
