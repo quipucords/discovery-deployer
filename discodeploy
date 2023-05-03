@@ -11,6 +11,8 @@ export OCP_PASSWORD="${OCP_PASSWORD:=developer}"
 
 export DISCOVERY_NAMESPACE="${DISCOVERY_NAMESPACE:=discovery}"
 
+export DJANGO_SECRET_KEY="${DJANGO_SECRET_KEY:=}"
+
 export DISCOVERY_REGISTRY="${DISCOVERY_REGISTRY:=quay.io}"
 export REGISTRY_USER="${REGISTRY_USER:=quay_user}"
 export REGISTRY_PASSWORD="${REGISTRY_PASSWORD:=}"
@@ -32,7 +34,7 @@ function cmdexec {
 # Let's display and allow for updates to environment variables
 function varupd {
   var="$(echo $1 | tr '[a-z]' '[A-Z]')"
-  if [[ "${var}" == *"PASS"* ]]; then
+  if [[ "${var}" == *"PASS"* || "${var}" == *"KEY" ]]; then
     echo -n "${var} ($(echo ${!var} | sed 's/./*/g')): "
     read -s value
     echo ""
@@ -70,6 +72,7 @@ function get_env_deploy {
   varupd APPLICATION_DOMAIN
   varupd DISCOVERY_REGISTRY
   varupd QUIPUCORDS_IMAGE_TAG
+  varupd DJANGO_SECRET_KEY
   varupd REGISTRY_USER
   export REGISTRY_BASE="${DISCOVERY_REGISTRY}/${REGISTRY_USER}"
   varupd REGISTRY_BASE
@@ -172,11 +175,19 @@ function cmd_deploy {
     cmd_create_pull_secret
   fi
   cmdexec oc apply -f discovery_template.yaml
-  cmdexec oc new-app --template=discovery \
-    --param=DISCOVERY_SERVER_IMAGE="${DISCOVERY_SERVER_IMAGE}" \
-    --param=DISCOVERY_NAMESPACE=${DISCOVERY_NAMESPACE} \
-    --param=APPLICATION_DOMAIN="${APPLICATION_DOMAIN}"
-
+  if [ -z "${DJANGO_SECRET_KEY}" ]
+  then
+    cmdexec oc new-app --template=discovery \
+      --param=DISCOVERY_SERVER_IMAGE="${DISCOVERY_SERVER_IMAGE}" \
+      --param=DISCOVERY_NAMESPACE=${DISCOVERY_NAMESPACE} \
+      --param=APPLICATION_DOMAIN="${APPLICATION_DOMAIN}"
+  else
+    cmdexec oc new-app --template=discovery \
+      --param=DISCOVERY_SERVER_IMAGE="${DISCOVERY_SERVER_IMAGE}" \
+      --param=DISCOVERY_NAMESPACE=${DISCOVERY_NAMESPACE} \
+      --param=APPLICATION_DOMAIN="${APPLICATION_DOMAIN}" \
+      --param=DJANGO_SECRET_KEY="`echo ${DJANGO_SECRET_KEY} | base64`"
+  fi
   echo ""
   echo "Application Url: https://${APPLICATION_DOMAIN}"
 }
@@ -210,6 +221,8 @@ function cmd_undeploy {
   oc delete --ignore-not-found=true pvc/discovery-log-volume-claim
   echo "Deleting Service Accounts ..."
   oc delete --ignore-not-found=true sa/discovery-sa
+  echo "Deleting Discovery Secrets ..."
+  oc delete --ignore-not-found=true secrets/discovery-secrets
   echo "Deleting Discovery Template ..."
   oc delete --ignore-not-found=true -f discovery_template.yaml
 }
@@ -257,6 +270,7 @@ Environment variables that are honored and prompted for (defaults):
     OCP_PASSWORD               (developer)
     DISCOVERY_NAMESPACE        (discovery)
     APPLICATION_DOMAIN         (discovery-server-discovery.apps-crc.testing)
+    DJANGO_SECRET_KEY          ()  Template default is: development
  
     DISCOVERY_REGISTRY         (quay.io)
     REGISTRY_USER              (quay_user)
