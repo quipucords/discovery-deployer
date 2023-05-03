@@ -15,6 +15,12 @@ objects:
   metadata:
     name: ${DISCOVERY_SA_NAME}
 - apiVersion: v1
+  kind: Secret
+  metadata:
+    name: discovery-secrets
+  data:
+    django-secret-key: ${DJANGO_SECRET_KEY}
+- apiVersion: v1
   kind: PersistentVolumeClaim
   metadata:
     name: discovery-data-volume-claim
@@ -176,6 +182,11 @@ objects:
                 value: "3"
               - name: DJANGO_SECRET_PATH
                 value: "${DJANGO_SECRET_PATH}"
+              - name: DJANGO_SECRET_KEY
+                valueFrom:
+                  secretKeyRef:
+                    key: django-secret-key
+                    name: discovery-secrets
               - name: QPC_DBMS
                 value: "postgres"
               - name: QPC_DBMS_DATABASE
@@ -259,6 +270,11 @@ objects:
                 value: "${ANSIBLE_LOCAL_TEMP}"
               - name: DJANGO_SECRET_PATH
                 value: "${DJANGO_SECRET_PATH}"
+              - name: DJANGO_SECRET_KEY
+                valueFrom:
+                  secretKeyRef:
+                    key: django-secret-key
+                    name: discovery-secrets
               - name: REDIS_HOST
                 value: "discovery-redis.${DISCOVERY_NAMESPACE}.svc.cluster.local"
               - name: REDIS_PASSWORD
@@ -412,7 +428,11 @@ parameters:
 - name: DJANGO_SECRET_PATH
   displayName: Path for the Django secret
   description: This is the path for the Django secret
-  value: "/app/quipucords/secret.txt"
+  value: "/var/data/secret.txt"
+- name: DJANGO_SECRET_KEY
+  displayName: Django secret key
+  description: This is the Django App Secret key
+  value: "ZGV2ZWxvcG1lbnQK"
 - name: DISCOVERY_SERVER_IMAGE
   displayName: Container image for the Discovery server.
   description: This is the image for the Discovery server.
