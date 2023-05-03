@@ -10,11 +10,12 @@ export OCP_USER="${OCP_USER:=developer}"
 export OCP_PASSWORD="${OCP_PASSWORD:=developer}"
 
 export DISCOVERY_NAMESPACE="${DISCOVERY_NAMESPACE:=discovery}"
+export APPLICATION_DOMAIN_SUFFIX="${APPLICATION_DOMAIN_SUFFIX:=apps-crc.testing}"
 
 export DJANGO_SECRET_KEY="${DJANGO_SECRET_KEY:=}"
 
 export DISCOVERY_REGISTRY="${DISCOVERY_REGISTRY:=quay.io}"
-export REGISTRY_USER="${REGISTRY_USER:=quay_user}"
+export REGISTRY_USER="${REGISTRY_USER:=quipucords}"
 export REGISTRY_PASSWORD="${REGISTRY_PASSWORD:=}"
 export REGISTRY_EMAIL="${REGISTRY_EMAIL:=}"
 
@@ -52,15 +53,19 @@ function default_registry_email {
   fi
 }
 
+function get_registry_password_and_email {
+  varupd REGISTRY_PASSWORD
+  default_registry_email
+  varupd REGISTRY_EMAIL
+}
+
 function get_env_create_pull_secret {
   varupd OCP_SERVER
   varupd OCP_USER
   varupd OCP_PASSWORD
   varupd DISCOVERY_NAMESPACE
   varupd REGISTRY_USER
-  varupd REGISTRY_PASSWORD
-  default_registry_email
-  varupd REGISTRY_EMAIL
+  get_registry_password_and_email
 }
 
 function get_env_deploy {
@@ -68,16 +73,15 @@ function get_env_deploy {
   varupd OCP_USER
   varupd OCP_PASSWORD
   varupd DISCOVERY_NAMESPACE
-  export APPLICATION_DOMAIN="discovery-server-${DISCOVERY_NAMESPACE}.apps-crc.testing"
+  varupd APPLICATION_DOMAIN_SUFFIX
+  export APPLICATION_DOMAIN="discovery-server-${DISCOVERY_NAMESPACE}.${APPLICATION_DOMAIN_SUFFIX}"
   varupd APPLICATION_DOMAIN
   varupd DISCOVERY_REGISTRY
   varupd QUIPUCORDS_IMAGE_TAG
+  export DISCOVERY_SERVER_IMAGE="${DISCOVERY_REGISTRY}/quipucords/${QUIPUCORDS_IMAGE}:${QUIPUCORDS_IMAGE_TAG}"
+  varupd DISCOVERY_SERVER_IMAGE
   varupd DJANGO_SECRET_KEY
   varupd REGISTRY_USER
-  export REGISTRY_BASE="${DISCOVERY_REGISTRY}/${REGISTRY_USER}"
-  varupd REGISTRY_BASE
-  export DISCOVERY_SERVER_IMAGE="${REGISTRY_BASE}/${QUIPUCORDS_IMAGE}:${QUIPUCORDS_IMAGE_TAG}"
-  varupd DISCOVERY_SERVER_IMAGE
 }
 
 function get_env_undeploy {
@@ -168,9 +172,7 @@ function cmd_deploy {
   if [ "`discovery_pull_secret_exists`" == "no" ]
   then
     echo ""
-    varupd REGISTRY_PASSWORD
-    default_registry_email
-    varupd REGISTRY_EMAIL
+    get_registry_password_and_email
     echo ""
     cmd_create_pull_secret
   fi
@@ -269,13 +271,13 @@ Environment variables that are honored and prompted for (defaults):
     OCP_USER                   (developer)
     OCP_PASSWORD               (developer)
     DISCOVERY_NAMESPACE        (discovery)
-    APPLICATION_DOMAIN         (discovery-server-discovery.apps-crc.testing)
+    APPLICATION_DOMAIN_SUFFIX  (apps-crc.testing)
     DJANGO_SECRET_KEY          ()  Template default is: development
  
     DISCOVERY_REGISTRY         (quay.io)
-    REGISTRY_USER              (quay_user)
+    REGISTRY_USER              (quipucords)
     REGISTRY_PASSWORD          ()
-    REGISTRY_EMAIL             (quay_user@redhat.com)
+    REGISTRY_EMAIL             (quipucords@redhat.com)
  
     QUIPUCORDS_IMAGE_TAG       (latest)
 END
