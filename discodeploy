@@ -36,7 +36,7 @@ function cmdexec {
 function varupd {
   var=$(echo "$1" | tr '[:lower:]' '[:upper:]')
   if [[ "${var}" == *"PASS"* || "${var}" == *"KEY" ]]; then
-    echo -n "${var} ($(echo "${!var}" | sed 's/./*/g')): "
+    echo -n "${var} (********): "
     read -rs value
     echo ""
   else
