@@ -27,7 +27,7 @@ export UPDATE_PULL_SECRET="no"
 
 # Helper proc to simply exit the script any of the OCP/Registry commands 
 function cmdexec {
-  $@
+  "$@"
   ec=$?
   [[ $ec -ne 0 ]] && echo "command $@ failed: exit code $ec" && exit $ec
 }
