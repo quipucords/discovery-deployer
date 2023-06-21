@@ -34,16 +34,16 @@ function cmdexec {
 
 # Let's display and allow for updates to environment variables
 function varupd {
-  var="$(echo $1 | tr '[a-z]' '[A-Z]')"
+  var=$(echo "$1" | tr '[a-z]' '[A-Z]')
   if [[ "${var}" == *"PASS"* || "${var}" == *"KEY" ]]; then
-    echo -n "${var} ($(echo ${!var} | sed 's/./*/g')): "
+    echo -n "${var} ($(echo "${!var}" | sed 's/./*/g')): "
     read -s value
     echo ""
   else
     echo -n "${var} (${!var}): "
     read value
   fi
-  [[ -n "${value}" ]] && export ${1}="${value}"
+  [[ -n "${value}" ]] && export "${1}"="${value}"
 }
 
 function default_registry_email {
@@ -92,7 +92,7 @@ function get_env_undeploy {
 }
 
 function discovery_pull_secret_exists {
-  oc get secrets/${DISCOVERY_PULL_SECRET} -n ${DISCOVERY_NAMESPACE} >/dev/null 2>&1
+  oc get secrets/"${DISCOVERY_PULL_SECRET}" -n "${DISCOVERY_NAMESPACE}" >/dev/null 2>&1
   if [ $? -eq 0 ]; then
     echo "yes"
   else
@@ -119,19 +119,19 @@ function cmd_create_pull_secret {
 `
   echo "Creating the Discovery pull secret ${DISCOVERY_PULL_SECRET} ..."
 
-  echo ${CONFIG_JSON} > ${DISCOVERY_PULL_SECRET_JSON}
+  echo "${CONFIG_JSON}" > "${DISCOVERY_PULL_SECRET_JSON}"
 
   if [ "`discovery_pull_secret_exists`" == "no" ]
   then
-    cmdexec oc create secret generic ${DISCOVERY_PULL_SECRET} --from-file=.dockerconfigjson=${DISCOVERY_PULL_SECRET_JSON} \
-      --type=kubernetes.io/dockerconfigjson -n ${DISCOVERY_NAMESPACE}
+    cmdexec oc create secret generic "${DISCOVERY_PULL_SECRET}" --from-file=.dockerconfigjson="${DISCOVERY_PULL_SECRET_JSON}" \
+      --type=kubernetes.io/dockerconfigjson -n "${DISCOVERY_NAMESPACE}"
   else
-    cmdexec oc create secret generic ${DISCOVERY_PULL_SECRET} --from-file=.dockerconfigjson=${DISCOVERY_PULL_SECRET_JSON} \
-      --type=kubernetes.io/dockerconfigjson -n ${DISCOVERY_NAMESPACE} --dry-run=client -o yaml | oc replace -n ${DISCOVERY_NAMESPACE} -f -
+    cmdexec oc create secret generic "${DISCOVERY_PULL_SECRET}" --from-file=.dockerconfigjson="${DISCOVERY_PULL_SECRET_JSON}" \
+      --type=kubernetes.io/dockerconfigjson -n "${DISCOVERY_NAMESPACE}" --dry-run=client -o yaml | oc replace -n "${DISCOVERY_NAMESPACE}" -f -
   fi
 
   # Zap the pull secret config json
-  rm -f ${DISCOVERY_PULL_SECRET_JSON}
+  rm -f "${DISCOVERY_PULL_SECRET_JSON}"
 
   # Link to the Default and Deployers servive accounts.
   for sa in "default" "deployer"
@@ -140,7 +140,7 @@ function cmd_create_pull_secret {
     if [ $? -eq 0 ]
     then
     echo "Linking the ${DISCOVERY_PULL_SECRET} to the ${sa} service_account ..."
-       oc secrets link ${sa}  ${DISCOVERY_PULL_SECRET} --for=pull
+       oc secrets link "${sa}" "${DISCOVERY_PULL_SECRET}" --for=pull
     fi
   done
 }
@@ -155,7 +155,7 @@ function cmd_deploy {
   [[ ! "${a}" == "y" ]] && echo "Aborting installation." && exit 1
 
   echo "Logging into the OpenShift cluster ${OCP_SERVER} ..."
-  cmdexec oc login --username="${OCP_USER}" --password="${OCP_PASSWORD}" ${OCP_SERVER}
+  cmdexec oc login --username="${OCP_USER}" --password="${OCP_PASSWORD}" "${OCP_SERVER}"
 
   echo "Creating project ${DISCOVERY_NAMESPACE} ..."
   oc project "${DISCOVERY_NAMESPACE}" >/dev/null 2>&1
@@ -181,14 +181,14 @@ function cmd_deploy {
   then
     cmdexec oc new-app --template=discovery \
       --param=DISCOVERY_SERVER_IMAGE="${DISCOVERY_SERVER_IMAGE}" \
-      --param=DISCOVERY_NAMESPACE=${DISCOVERY_NAMESPACE} \
+      --param=DISCOVERY_NAMESPACE="${DISCOVERY_NAMESPACE}" \
       --param=APPLICATION_DOMAIN="${APPLICATION_DOMAIN}"
   else
     cmdexec oc new-app --template=discovery \
       --param=DISCOVERY_SERVER_IMAGE="${DISCOVERY_SERVER_IMAGE}" \
-      --param=DISCOVERY_NAMESPACE=${DISCOVERY_NAMESPACE} \
+      --param=DISCOVERY_NAMESPACE="${DISCOVERY_NAMESPACE}" \
       --param=APPLICATION_DOMAIN="${APPLICATION_DOMAIN}" \
-      --param=DJANGO_SECRET_KEY="`echo ${DJANGO_SECRET_KEY} | base64`"
+      --param=DJANGO_SECRET_KEY="`echo "${DJANGO_SECRET_KEY}" | base64`"
   fi
   echo ""
   echo "Application Url: https://${APPLICATION_DOMAIN}"
@@ -204,7 +204,7 @@ function cmd_undeploy {
   [[ ! "${a}" == "y" ]] && echo "Aborting un-installation." && exit 1
 
   echo "Logging into the OpenShift cluster ${OCP_SERVER} ..."
-  cmdexec oc login --username="${OCP_USER}" --password="${OCP_PASSWORD}" ${OCP_SERVER}
+  cmdexec oc login --username="${OCP_USER}" --password="${OCP_PASSWORD}" "${OCP_SERVER}"
 
   cmdexec oc project "${DISCOVERY_NAMESPACE}"
   echo "Deleting Deployments ..."
