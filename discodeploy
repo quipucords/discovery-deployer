@@ -29,7 +29,7 @@ export UPDATE_PULL_SECRET="no"
 function cmdexec {
   "$@"
   ec=$?
-  [[ $ec -ne 0 ]] && echo "command $@ failed: exit code $ec" && exit $ec
+  [[ $ec -ne 0 ]] && echo "command $* failed: exit code $ec" && exit $ec
 }
 
 # Let's display and allow for updates to environment variables
