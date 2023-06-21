@@ -1,7 +1,7 @@
 #!/bin/bash
 #
 # Usage: discodeploy [--help] [--deploy | --create-pull-secret | --undeploy]
-#   
+#
 
 export USAGE="discodeploy [--help] [--deploy | --create-pull-secret | --undeploy]"
 
@@ -25,15 +25,15 @@ export QUIPUCORDS_IMAGE_TAG="${QUIPUCORDS_IMAGE_TAG:=latest}"
 export DISCOVERY_PULL_SECRET="discovery-pull-secret"
 export UPDATE_PULL_SECRET="no"
 
-# Helper proc to simply exit the script any of the OCP/Registry commands 
-function cmdexec {
+# Helper proc to simply exit the script any of the OCP/Registry commands
+function cmdexec() {
   "$@"
   ec=$?
   [[ $ec -ne 0 ]] && echo "command $* failed: exit code $ec" && exit $ec
 }
 
 # Let's display and allow for updates to environment variables
-function varupd {
+function varupd() {
   var=$(echo "$1" | tr '[:lower:]' '[:upper:]')
   if [[ "${var}" == *"PASS"* || "${var}" == *"KEY" ]]; then
     echo -n "${var} (********): "
@@ -46,20 +46,19 @@ function varupd {
   [[ -n "${value}" ]] && export "${1}"="${value}"
 }
 
-function default_registry_email {
-  if [ -z "${REGISTRY_EMAIL}" ]
-  then
+function default_registry_email() {
+  if [ -z "${REGISTRY_EMAIL}" ]; then
     export REGISTRY_EMAIL="${REGISTRY_USER}@redhat.com"
   fi
 }
 
-function get_registry_password_and_email {
+function get_registry_password_and_email() {
   varupd REGISTRY_PASSWORD
   default_registry_email
   varupd REGISTRY_EMAIL
 }
 
-function get_env_create_pull_secret {
+function get_env_create_pull_secret() {
   varupd OCP_SERVER
   varupd OCP_USER
   varupd OCP_PASSWORD
@@ -68,7 +67,7 @@ function get_env_create_pull_secret {
   get_registry_password_and_email
 }
 
-function get_env_deploy {
+function get_env_deploy() {
   varupd OCP_SERVER
   varupd OCP_USER
   varupd OCP_PASSWORD
@@ -84,14 +83,14 @@ function get_env_deploy {
   varupd REGISTRY_USER
 }
 
-function get_env_undeploy {
+function get_env_undeploy() {
   varupd OCP_SERVER
   varupd OCP_USER
   varupd OCP_PASSWORD
   varupd DISCOVERY_NAMESPACE
 }
 
-function discovery_pull_secret_exists {
+function discovery_pull_secret_exists() {
   if oc get secrets/"${DISCOVERY_PULL_SECRET}" -n "${DISCOVERY_NAMESPACE}" >/dev/null 2>&1; then
     echo "yes"
   else
@@ -100,10 +99,11 @@ function discovery_pull_secret_exists {
 }
 
 # Let's create or update the discovery pull secret
-function cmd_create_pull_secret {
+function cmd_create_pull_secret() {
   DISCOVERY_PULL_SECRET_JSON="/tmp/qpc_pull_secret_$$.json"
 
-  CONFIG_JSON=$(cat - <<!END!
+  CONFIG_JSON=$(
+    cat - <<!END!
 {
   "auths" :
     {
@@ -115,13 +115,12 @@ function cmd_create_pull_secret {
     }
 }
 !END!
-)
+  )
   echo "Creating the Discovery pull secret ${DISCOVERY_PULL_SECRET} ..."
 
-  echo "${CONFIG_JSON}" > "${DISCOVERY_PULL_SECRET_JSON}"
+  echo "${CONFIG_JSON}" >"${DISCOVERY_PULL_SECRET_JSON}"
 
-  if [ "$(discovery_pull_secret_exists)" == "no" ]
-  then
+  if [ "$(discovery_pull_secret_exists)" == "no" ]; then
     cmdexec oc create secret generic "${DISCOVERY_PULL_SECRET}" --from-file=.dockerconfigjson="${DISCOVERY_PULL_SECRET_JSON}" \
       --type=kubernetes.io/dockerconfigjson -n "${DISCOVERY_NAMESPACE}"
   else
@@ -133,21 +132,19 @@ function cmd_create_pull_secret {
   rm -f "${DISCOVERY_PULL_SECRET_JSON}"
 
   # Link to the Default and Deployers servive accounts.
-  for sa in "default" "deployer"
-  do
-    if oc get sa/${sa} >/dev/null 2>&1
-    then
-    echo "Linking the ${DISCOVERY_PULL_SECRET} to the ${sa} service_account ..."
-       oc secrets link "${sa}" "${DISCOVERY_PULL_SECRET}" --for=pull
+  for sa in "default" "deployer"; do
+    if oc get sa/${sa} >/dev/null 2>&1; then
+      echo "Linking the ${DISCOVERY_PULL_SECRET} to the ${sa} service_account ..."
+      oc secrets link "${sa}" "${DISCOVERY_PULL_SECRET}" --for=pull
     fi
   done
 }
 
-function cmd_deploy {
+function cmd_deploy() {
   # Let's confirm stuff ...
   echo ""
   echo "About to deploy Discovery image \"${DISCOVERY_SERVER_IMAGE}\" to \"${OCP_SERVER}\""
-  echo -n "as user \"${OCP_USER}\" to project \"${DISCOVERY_NAMESPACE}\" namespace (y/n)? " 
+  echo -n "as user \"${OCP_USER}\" to project \"${DISCOVERY_NAMESPACE}\" namespace (y/n)? "
   read -r a
 
   [[ ! "${a}" == "y" ]] && echo "Aborting installation." && exit 1
@@ -156,26 +153,22 @@ function cmd_deploy {
   cmdexec oc login --username="${OCP_USER}" --password="${OCP_PASSWORD}" "${OCP_SERVER}"
 
   echo "Creating project ${DISCOVERY_NAMESPACE} ..."
-  if ! oc project "${DISCOVERY_NAMESPACE}" >/dev/null 2>&1
-  then
+  if ! oc project "${DISCOVERY_NAMESPACE}" >/dev/null 2>&1; then
     oc new-project "${DISCOVERY_NAMESPACE}" \
       --display-name="${DISCOVERY_NAMESPACE}" \
       --description="Discovery Project ${DISCOVERY_NAMESPACE}"
   fi
 
-
   # If we don't have a discovery pull secret,
   # let's ask for the password and email and create one.
-  if [ "$(discovery_pull_secret_exists)" == "no" ]
-  then
+  if [ "$(discovery_pull_secret_exists)" == "no" ]; then
     echo ""
     get_registry_password_and_email
     echo ""
     cmd_create_pull_secret
   fi
   cmdexec oc apply -f discovery_template.yaml
-  if [ -z "${DJANGO_SECRET_KEY}" ]
-  then
+  if [ -z "${DJANGO_SECRET_KEY}" ]; then
     cmdexec oc new-app --template=discovery \
       --param=DISCOVERY_SERVER_IMAGE="${DISCOVERY_SERVER_IMAGE}" \
       --param=DISCOVERY_NAMESPACE="${DISCOVERY_NAMESPACE}" \
@@ -191,11 +184,11 @@ function cmd_deploy {
   echo "Application Url: https://${APPLICATION_DOMAIN}"
 }
 
-function cmd_undeploy {
+function cmd_undeploy() {
   # Let's confirm stuff ...
   echo ""
   echo "About to undeploy Discovery from \"${OCP_SERVER}\""
-  echo -n "as user \"${OCP_USER}\" in project \"${DISCOVERY_NAMESPACE}\" namespace (y/n)? " 
+  echo -n "as user \"${OCP_USER}\" in project \"${DISCOVERY_NAMESPACE}\" namespace (y/n)? "
   read -r a
 
   [[ ! "${a}" == "y" ]] && echo "Aborting un-installation." && exit 1
@@ -226,29 +219,25 @@ function cmd_undeploy {
   oc delete --ignore-not-found=true -f discovery_template.yaml
 }
 
-if [ "${1}" == "--deploy" ]
-then
+if [ "${1}" == "--deploy" ]; then
   shift
   echo "Discovery Deployer ..."
   echo ""
   get_env_deploy
   cmd_deploy
-elif [ "${1}" == "--create-pull-secret" ]
-then
+elif [ "${1}" == "--create-pull-secret" ]; then
   shift
   echo "Creating Discovery Registry Pull Secret ..."
   echo ""
   get_env_create_pull_secret
   cmd_create_pull_secret
-elif [ "${1}" == "--undeploy" ]
-then
+elif [ "${1}" == "--undeploy" ]; then
   shift
   echo "Discovery UnDeployer ..."
   echo ""
   get_env_undeploy
   cmd_undeploy
-elif [ "${1}" == "--help" ]
-then
+elif [ "${1}" == "--help" ]; then
   cat <<END
 
 Discovery (quipucords) Product Deployer script to OpenShift.
@@ -258,9 +247,9 @@ ${USAGE}
 
   --deploy               Deploys the Discovery product to OpenShift
 
-  --create-pull-secret   Recreates/Updates the pull secret created 
+  --create-pull-secret   Recreates/Updates the pull secret created
                          during a deploy.
-  
+
   --undeploy             Undeploys Discovery from OpenShift.
 
 Environment variables that are honored and prompted for (defaults):
@@ -270,12 +259,12 @@ Environment variables that are honored and prompted for (defaults):
     DISCOVERY_NAMESPACE        (discovery)
     APPLICATION_DOMAIN_SUFFIX  (apps-crc.testing)
     DJANGO_SECRET_KEY          ()  Template default is: development
- 
+
     DISCOVERY_REGISTRY         (quay.io)
     REGISTRY_USER              (quipucords)
     REGISTRY_PASSWORD          ()
     REGISTRY_EMAIL             (quipucords@redhat.com)
- 
+
     QUIPUCORDS_IMAGE_TAG       (latest)
 END
 else
