@@ -34,7 +34,7 @@ function cmdexec {
 
 # Let's display and allow for updates to environment variables
 function varupd {
-  var=$(echo "$1" | tr 'a-z' 'A-Z')
+  var=$(echo "$1" | tr '[:lower:]' '[:upper:]')
   if [[ "${var}" == *"PASS"* || "${var}" == *"KEY" ]]; then
     echo -n "${var} ($(echo "${!var}" | sed 's/./*/g')): "
     read -rs value
