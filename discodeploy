@@ -92,8 +92,7 @@ function get_env_undeploy {
 }
 
 function discovery_pull_secret_exists {
-  oc get secrets/"${DISCOVERY_PULL_SECRET}" -n "${DISCOVERY_NAMESPACE}" >/dev/null 2>&1
-  if [ $? -eq 0 ]; then
+  if oc get secrets/"${DISCOVERY_PULL_SECRET}" -n "${DISCOVERY_NAMESPACE}" >/dev/null 2>&1; then
     echo "yes"
   else
     echo "no"
@@ -136,8 +135,7 @@ function cmd_create_pull_secret {
   # Link to the Default and Deployers servive accounts.
   for sa in "default" "deployer"
   do
-    oc get sa/${sa} >/dev/null 2>&1
-    if [ $? -eq 0 ]
+    if oc get sa/${sa} >/dev/null 2>&1
     then
     echo "Linking the ${DISCOVERY_PULL_SECRET} to the ${sa} service_account ..."
        oc secrets link "${sa}" "${DISCOVERY_PULL_SECRET}" --for=pull
@@ -158,8 +156,7 @@ function cmd_deploy {
   cmdexec oc login --username="${OCP_USER}" --password="${OCP_PASSWORD}" "${OCP_SERVER}"
 
   echo "Creating project ${DISCOVERY_NAMESPACE} ..."
-  oc project "${DISCOVERY_NAMESPACE}" >/dev/null 2>&1
-  if [ $? -ne 0 ]
+  if ! oc project "${DISCOVERY_NAMESPACE}" >/dev/null 2>&1
   then
     oc new-project "${DISCOVERY_NAMESPACE}" \
       --display-name="${DISCOVERY_NAMESPACE}" \
