@@ -104,7 +104,7 @@ function discovery_pull_secret_exists {
 function cmd_create_pull_secret {
   DISCOVERY_PULL_SECRET_JSON="/tmp/qpc_pull_secret_$$.json"
 
-  CONFIG_JSON=`cat - <<!END!
+  CONFIG_JSON=$(cat - <<!END!
 {
   "auths" :
     {
@@ -116,12 +116,12 @@ function cmd_create_pull_secret {
     }
 }
 !END!
-`
+)
   echo "Creating the Discovery pull secret ${DISCOVERY_PULL_SECRET} ..."
 
   echo "${CONFIG_JSON}" > "${DISCOVERY_PULL_SECRET_JSON}"
 
-  if [ "`discovery_pull_secret_exists`" == "no" ]
+  if [ "$(discovery_pull_secret_exists)" == "no" ]
   then
     cmdexec oc create secret generic "${DISCOVERY_PULL_SECRET}" --from-file=.dockerconfigjson="${DISCOVERY_PULL_SECRET_JSON}" \
       --type=kubernetes.io/dockerconfigjson -n "${DISCOVERY_NAMESPACE}"
@@ -169,7 +169,7 @@ function cmd_deploy {
 
   # If we don't have a discovery pull secret,
   # let's ask for the password and email and create one.
-  if [ "`discovery_pull_secret_exists`" == "no" ]
+  if [ "$(discovery_pull_secret_exists)" == "no" ]
   then
     echo ""
     get_registry_password_and_email
@@ -188,7 +188,7 @@ function cmd_deploy {
       --param=DISCOVERY_SERVER_IMAGE="${DISCOVERY_SERVER_IMAGE}" \
       --param=DISCOVERY_NAMESPACE="${DISCOVERY_NAMESPACE}" \
       --param=APPLICATION_DOMAIN="${APPLICATION_DOMAIN}" \
-      --param=DJANGO_SECRET_KEY="`echo "${DJANGO_SECRET_KEY}" | base64`"
+      --param=DJANGO_SECRET_KEY="$(echo "${DJANGO_SECRET_KEY}" | base64)"
   fi
   echo ""
   echo "Application Url: https://${APPLICATION_DOMAIN}"
