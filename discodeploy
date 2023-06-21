@@ -37,11 +37,11 @@ function varupd {
   var=$(echo "$1" | tr '[a-z]' '[A-Z]')
   if [[ "${var}" == *"PASS"* || "${var}" == *"KEY" ]]; then
     echo -n "${var} ($(echo "${!var}" | sed 's/./*/g')): "
-    read -s value
+    read -rs value
     echo ""
   else
     echo -n "${var} (${!var}): "
-    read value
+    read -r value
   fi
   [[ -n "${value}" ]] && export "${1}"="${value}"
 }
@@ -150,7 +150,7 @@ function cmd_deploy {
   echo ""
   echo "About to deploy Discovery image \"${DISCOVERY_SERVER_IMAGE}\" to \"${OCP_SERVER}\""
   echo -n "as user \"${OCP_USER}\" to project \"${DISCOVERY_NAMESPACE}\" namespace (y/n)? " 
-  read a
+  read -r a
 
   [[ ! "${a}" == "y" ]] && echo "Aborting installation." && exit 1
 
@@ -199,7 +199,7 @@ function cmd_undeploy {
   echo ""
   echo "About to undeploy Discovery from \"${OCP_SERVER}\""
   echo -n "as user \"${OCP_USER}\" in project \"${DISCOVERY_NAMESPACE}\" namespace (y/n)? " 
-  read a
+  read -r a
 
   [[ ! "${a}" == "y" ]] && echo "Aborting un-installation." && exit 1
 
