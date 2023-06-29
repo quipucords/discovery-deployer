@@ -19,6 +19,7 @@ export REGISTRY_USER="${REGISTRY_USER:=quipucords}"
 export REGISTRY_PASSWORD="${REGISTRY_PASSWORD:=}"
 export REGISTRY_EMAIL="${REGISTRY_EMAIL:=}"
 
+export REGISTRY_ACCOUNT="${REGISTRY_ACCOUNT:=quipucords}"
 export QUIPUCORDS_IMAGE="quipucords"
 export QUIPUCORDS_IMAGE_TAG="${QUIPUCORDS_IMAGE_TAG:=latest}"
 
@@ -80,8 +81,9 @@ function get_env_deploy() {
   export APPLICATION_DOMAIN="discovery-server-${DISCOVERY_NAMESPACE}.${APPLICATION_DOMAIN_SUFFIX}"
   varupd APPLICATION_DOMAIN
   varupd DISCOVERY_REGISTRY
+  varupd REGISTRY_ACCOUNT
   varupd QUIPUCORDS_IMAGE_TAG
-  export DISCOVERY_SERVER_IMAGE="${DISCOVERY_REGISTRY}/quipucords/${QUIPUCORDS_IMAGE}:${QUIPUCORDS_IMAGE_TAG}"
+  export DISCOVERY_SERVER_IMAGE="${DISCOVERY_REGISTRY}/${REGISTRY_ACCOUNT}/${QUIPUCORDS_IMAGE}:${QUIPUCORDS_IMAGE_TAG}"
   varupd DISCOVERY_SERVER_IMAGE
   varupd DJANGO_SECRET_KEY
   varupd REGISTRY_USER
@@ -269,6 +271,7 @@ Environment variables that are honored and prompted for (defaults):
     REGISTRY_PASSWORD          ()
     REGISTRY_EMAIL             (quipucords@redhat.com)
 
+    REGISTRY_ACCOUNT           (quipucords)
     QUIPUCORDS_IMAGE_TAG       (latest)
 END
 else
