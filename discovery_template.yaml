@@ -20,6 +20,7 @@ objects:
     name: discovery-secrets
   data:
     django-secret-key: ${DJANGO_SECRET_KEY}
+    server-password: ${DISCOVERY_SERVER_PASSWORD}
 - apiVersion: v1
   kind: PersistentVolumeClaim
   metadata:
@@ -203,6 +204,13 @@ objects:
                 value: "${DISCOVERY_SERVER_PORT}"
               - name: QPC_SERVER_TIMEOUT
                 value: "5"
+              - name: QPC_SERVER_USERNAME
+                value: "${DISCOVERY_SERVER_USERNAME}"
+              - name: QPC_SERVER_PASSWORD
+                valueFrom:
+                  secretKeyRef:
+                    key: server-password
+                    name: discovery-secrets
               - name: NETWORK_CONNECT_JOB_TIMEOUT
                 value: "6"
               - name: NETWORK_INSPECT_JOB_TIMEOUT
@@ -437,6 +445,14 @@ parameters:
   displayName: Container image for the Discovery server.
   description: This is the image for the Discovery server.
   value: "quay.io/quipucords/quipucords:latest"
+- name: DISCOVERY_SERVER_USERNAME
+  displayName: Discovery server admin user account.
+  description: This is the admin user account for the Discovery server.
+  value: "admin"
+- name: DISCOVERY_SERVER_PASSWORD
+  displayName: Discovery server admin password.
+  description: This is the password for the admin user account of the Discovery server.
+  value: ""
 - name: DISCOVERY_SA_NAME
   displayName: Discovery Service Account Name
   description: This is the name for the Discovery Service Account.

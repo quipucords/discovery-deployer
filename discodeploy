@@ -12,6 +12,7 @@ export OCP_PASSWORD="${OCP_PASSWORD:=developer}"
 export DISCOVERY_NAMESPACE="${DISCOVERY_NAMESPACE:=discovery}"
 export APPLICATION_DOMAIN_SUFFIX="${APPLICATION_DOMAIN_SUFFIX:=apps-crc.testing}"
 
+export DISCOVERY_SERVER_PASSWORD="${DISCOVERY_SERVER_PASSWORD:=}"
 export DJANGO_SECRET_KEY="${DJANGO_SECRET_KEY:=}"
 
 export DISCOVERY_REGISTRY="${DISCOVERY_REGISTRY:=quay.io}"
@@ -51,6 +52,17 @@ function varupd() {
   [[ -n "${value}" ]] && export "${1}"="${value}"
 }
 
+function get_server_password() {
+  while :
+  do
+    varupd DISCOVERY_SERVER_PASSWORD
+    [[ -z "${DISCOVERY_SERVER_PASSWORD}" ]] && echo "Must specify a server password" && continue
+    [[ "${DISCOVERY_SERVER_PASSWORD}" == "qpcpassw0rd" ]] && echo "Server password can no longer be the default value" && continue
+    [[ ${#DISCOVERY_SERVER_PASSWORD} -lt 10 ]] && echo "Server password must be at least 10 characters long" && continue
+    break
+  done
+}
+
 function default_registry_email() {
   if [ -z "${REGISTRY_EMAIL}" ]; then
     export REGISTRY_EMAIL="${REGISTRY_USER}@redhat.com"
@@ -85,6 +97,7 @@ function get_env_deploy() {
   varupd QUIPUCORDS_IMAGE_TAG
   export DISCOVERY_SERVER_IMAGE="${DISCOVERY_REGISTRY}/${REGISTRY_ACCOUNT}/${QUIPUCORDS_IMAGE}:${QUIPUCORDS_IMAGE_TAG}"
   varupd DISCOVERY_SERVER_IMAGE
+  get_server_password
   varupd DJANGO_SECRET_KEY
   varupd REGISTRY_USER
 }
@@ -177,11 +190,13 @@ function cmd_deploy() {
   if [ -z "${DJANGO_SECRET_KEY}" ]; then
     cmdexec oc new-app --template=discovery \
       --param=DISCOVERY_SERVER_IMAGE="${DISCOVERY_SERVER_IMAGE}" \
+      --param=DISCOVERY_SERVER_PASSWORD="$(echo -n "${DISCOVERY_SERVER_PASSWORD}" | base64)" \
       --param=DISCOVERY_NAMESPACE="${DISCOVERY_NAMESPACE}" \
       --param=APPLICATION_DOMAIN="${APPLICATION_DOMAIN}"
   else
     cmdexec oc new-app --template=discovery \
       --param=DISCOVERY_SERVER_IMAGE="${DISCOVERY_SERVER_IMAGE}" \
+      --param=DISCOVERY_SERVER_PASSWORD="$(echo -n "${DISCOVERY_SERVER_PASSWORD}" | base64)" \
       --param=DISCOVERY_NAMESPACE="${DISCOVERY_NAMESPACE}" \
       --param=APPLICATION_DOMAIN="${APPLICATION_DOMAIN}" \
       --param=DJANGO_SECRET_KEY="$(echo "${DJANGO_SECRET_KEY}" | base64)"
