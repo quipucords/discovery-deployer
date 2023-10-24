@@ -38,13 +38,33 @@ function cmdexec() {
 function varupd() {
   var=$(echo "$1" | tr '[:lower:]' '[:upper:]')
   if [[ "${var}" == *"PASS"* || "${var}" == *"KEY" ]]; then
-    if [[ "${!var}" == "" ]]; then
-      echo -n "${var} (): "
-    else
-      echo -n "${var} (********): "
-    fi
-    read -rs value
-    echo ""
+    while :
+    do
+      if [[ "${!var}" == "" ]]; then
+        echo -n "${var} (): "
+      else
+        echo -n "${var} (********): "
+      fi
+      read -rs value
+      if [ -n "${value}" ]; then
+        echo ""
+        echo -n "Re-enter ${var} : "
+        read -rs value2
+        if [ ! "${value2}" = "${value}" ]; then
+          echo ""
+          echo "Password or token do not match"
+          continue
+        fi
+      else
+        if [[ "${var}" == *"PASS"* && "${!var}" == "" ]]; then
+          echo ""
+          echo "Must specify a password"
+          continue
+        fi
+      fi
+      echo ""
+      break
+    done
   else
     echo -n "${var} (${!var}): "
     read -r value
@@ -57,8 +77,22 @@ function get_server_password() {
   do
     varupd DISCOVERY_SERVER_PASSWORD
     [[ -z "${DISCOVERY_SERVER_PASSWORD}" ]] && echo "Must specify a server password" && continue
-    [[ "${DISCOVERY_SERVER_PASSWORD}" == "qpcpassw0rd" ]] && echo "Server password can no longer be the default value" && continue
-    [[ ${#DISCOVERY_SERVER_PASSWORD} -lt 10 ]] && echo "Server password must be at least 10 characters long" && continue
+    REJECTED_PASSWORDS=("qpcpassw0rd" "dscpassw0rd")
+    if [[ ${REJECTED_PASSWORDS[@]} =~ "${DISCOVERY_SERVER_PASSWORD}" ]]; then
+      DISCOVERY_SERVER_PASSWORD=""
+      echo "Server password can no longer be the default value"
+      continue
+    fi
+    if [[ "${DISCOVERY_SERVER_PASSWORD}" =~ ^[0-9]+$ ]]; then
+      DISCOVERY_SERVER_PASSWORD=""
+      echo "Server password specified is all numeric"
+      continue
+    fi
+    if [ ${#DISCOVERY_SERVER_PASSWORD} -lt 10 ]; then
+      DISCOVERY_SERVER_PASSWORD=""
+      echo "Server password must be at least 10 characters long"
+      continue
+    fi
     break
   done
 }
