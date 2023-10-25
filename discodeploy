@@ -40,29 +40,21 @@ function varupd() {
   if [[ "${var}" == *"PASS"* || "${var}" == *"KEY" ]]; then
     while :
     do
-      if [[ "${!var}" == "" ]]; then
-        echo -n "${var} (): "
-      else
-        echo -n "${var} (********): "
-      fi
-      read -rs value
+      read -rs -p "${var} (${!var:+********}): " value
+      echo
       if [ -n "${value}" ]; then
-        echo ""
-        echo -n "Re-enter ${var} : "
-        read -rs value2
+        read -rs -p "Re-enter ${var}: " value2
+        echo
         if [ ! "${value2}" = "${value}" ]; then
-          echo ""
-          echo "Password or token do not match"
+          echo "Values do not match."
           continue
         fi
       else
         if [[ "${var}" == *"PASS"* && "${!var}" == "" ]]; then
-          echo ""
-          echo "Must specify a password"
+          echo "Must specify a password."
           continue
         fi
       fi
-      echo ""
       break
     done
   else
