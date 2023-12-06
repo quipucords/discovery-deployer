@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "discovery-db.fullname" . }}
+spec:
+  selector:
+    {{- include "discovery-db.selectorLabels" . | nindent 4 }}
+  type: ClusterIP
+  internalTrafficPolicy: Cluster
+  ipFamilies:
+  - IPv4
+  ports:
+    - port: {{ .Values.service.port}}
+      targetPort: {{ .Values.service.port }}
+      protocol: TCP

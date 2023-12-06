@@ -1,0 +1,156 @@
+# Default values for discovery.
+
+replicaCount: 1
+
+# The externally accessible URL for the Discovery server.
+applicationDomain: "discovery-server-discovery.apps-crc.testing"
+
+image:
+  repository: "quay.io/quipucords/quipucords"
+  tag: "latest"
+  pullPolicy: Always
+
+# The image for the Discovery server
+restartPolicy: Always
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: true
+  # Automatically mount a ServiceAccount's API credentials?
+  automount: true
+  # Annotations to add to the service account
+  annotations: {}
+
+podAnnotations: {}
+podLabels: {}
+
+podSecurityContext: {}
+  # fsGroup: 2000
+
+securityContext: {}
+  # capabilities:
+  #   drop:
+  #   - ALL
+  # readOnlyRootFilesystem: true
+  # runAsNonRoot: true
+  # runAsUser: 1000
+
+service:
+  type: ClusterIP
+  port: 80
+
+ingress:
+  enabled: false
+  className: ""
+  annotations: {}
+    # kubernetes.io/ingress.class: nginx
+    # kubernetes.io/tls-acme: "true"
+  hosts:
+    - host: chart-example.local
+      paths:
+        - path: /
+          pathType: ImplementationSpecific
+  tls: []
+  #  - secretName: chart-example-tls
+  #    hosts:
+  #      - chart-example.local
+
+resources: {}
+  # We usually recommend not to specify default resources and to leave this as a conscious
+  # choice for the user. This also increases chances charts run on environments with little
+  # resources, such as Minikube. If you do want to specify resources, uncomment the following
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  # limits:
+  #   cpu: 100m
+  #   memory: 128Mi
+  # requests:
+  #   cpu: 100m
+  #   memory: 128Mi
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 100
+  targetCPUUtilizationPercentage: 80
+  # targetMemoryUtilizationPercentage: 80
+
+# Additional volumes on the output Deployment definition.
+volumes: []
+# - name: foo
+#   secret:
+#     secretName: mysecret
+#     optional: false
+
+# Additional volumeMounts on the output Deployment definition.
+volumeMounts:
+- name: discovery-data-volume-claim
+  mountPath: "/var/data"
+  readOnly: false
+- name: discovery-log-volume-claim
+  mountPath: "/var/log"
+  readOnly: false
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+discoveryCeleryWorkerMinimumReplicaCount: "3"
+
+
+server:
+  port: "8443"
+  # The admin user account for the Discovery server.
+  userName: "admin"
+  # The password for the admin user account of the Discovery server.
+  password: ""
+
+ansible:
+  # The path for the ansible remote temp directory (overrides /.ansible/tmp).
+  remoteTmp: "/var/data/tmp/ansible/remote"
+  # The path for the ansible temp directory (overrides /.ansible/tmp).
+  localTemp: "/var/data/tmp/ansible/local"
+
+# Discovery Celery Worker SUb-chart
+discovery-celery-worker:
+  image:
+    repository: "quay.io/quipucords/quipucords"
+    tag: "latest"
+  ansible:
+    remoteTmp: "/var/data/tmp/ansible/remote"
+    localTemp: "/var/data/tmp/ansible/local"
+
+# Discovery REDIS Sub-chart
+discovery-redis:
+  service:
+    port: "6379"
+    password: "qpc"
+
+# Discovery PostgreSQL Sub-chart
+discovery-db:
+  service:
+    port: "5432"
+  postgresql:
+    database: "qpc"
+    user: "qpc"
+    password: "qpc"
+
+# Globals shared with the Sub-charts
+global:
+  # The OpenShift project namespace where Discovery is getting installed
+  nameSpace: "discovery"
+  # The image to use for the Discovery server and celery workers
+  # the Redis service password
+  redisPassword: "qpc"
+  # The pullSecret for the discovery
+  imagePullSecrets:
+  - discovery-pull-secret
+  # The Service Account name for discovery
+  serviceAccountName: "discovery-sa"
+  # The path for the Django secret
+  djangoSecretPath: "/var/data/secret.txt"
+  # The Django App Secret Key
+  djangoSecretKey: "ZGV2ZWxvcG1lbnQK"
