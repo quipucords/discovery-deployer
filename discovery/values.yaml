@@ -37,7 +37,11 @@ securityContext: {}
   # runAsNonRoot: true
   # runAsUser: 1000
 
+route:
+  name: discovery-server
+
 service:
+  name: discovery-server
   type: ClusterIP
   port: 8443
 
@@ -115,7 +119,6 @@ discovery-db:
 global:
   # The OpenShift project namespace where Discovery is getting installed
   nameSpace: "discovery"
-  # The image to use for the Discovery server and celery workers
   # the Redis service password
   redisPassword: "qpc"
   # The pullSecret for the discovery
