@@ -77,9 +77,6 @@ tolerations: []
 
 affinity: {}
 
-discoveryCeleryWorkerMinimumReplicaCount: "3"
-
-
 server:
   # The admin user account for the Discovery server.
   userName: "admin"
@@ -117,8 +114,6 @@ discovery-db:
 
 # Globals shared with the Sub-charts
 global:
-  # The OpenShift project namespace where Discovery is getting installed
-  nameSpace: "discovery"
   # the Redis service password
   redisPassword: "qpc"
   # The pullSecret for the discovery
