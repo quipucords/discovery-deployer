@@ -39,7 +39,7 @@ securityContext: {}
 
 service:
   type: ClusterIP
-  port: 80
+  port: 8443
 
 ingress:
   enabled: false
@@ -77,7 +77,6 @@ discoveryCeleryWorkerMinimumReplicaCount: "3"
 
 
 server:
-  port: "8443"
   # The admin user account for the Discovery server.
   userName: "admin"
   # The password for the admin user account of the Discovery server.
@@ -101,13 +100,12 @@ discovery-celery-worker:
 # Discovery REDIS Sub-chart
 discovery-redis:
   service:
-    port: "6379"
-    password: "qpc"
+    port: 6379
 
 # Discovery PostgreSQL Sub-chart
 discovery-db:
   service:
-    port: "5432"
+    port: 5432
   postgresql:
     database: "qpc"
     user: "qpc"

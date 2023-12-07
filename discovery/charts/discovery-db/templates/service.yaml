@@ -5,7 +5,7 @@ metadata:
 spec:
   selector:
     {{- include "discovery-db.selectorLabels" . | nindent 4 }}
-  type: ClusterIP
+  type: {{ .Values.service.type }}
   internalTrafficPolicy: Cluster
   ipFamilies:
   - IPv4
