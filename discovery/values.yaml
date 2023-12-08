@@ -67,7 +67,6 @@ pvc:
   log:
     requestStorage: 4Gi
 
-
 autoscaling:
   enabled: false
 
@@ -82,29 +81,45 @@ server:
   userName: "admin"
   # The password for the admin user account of the Discovery server.
   password: ""
+  timeout: "5"
+  debugpy: "1"
+  log:
+    all_env_vars_at_startup: "False"
+
+network:
+  connect:
+    job_timeout: "6"
+  inspect:
+    job_timeout: "600"
 
 ansible:
   # The path for the ansible remote temp directory (overrides /.ansible/tmp).
   remoteTmp: "/var/data/tmp/ansible/remote"
   # The path for the ansible temp directory (overrides /.ansible/tmp).
   localTemp: "/var/data/tmp/ansible/local"
+  logLevel: "3"
 
-# Discovery Celery Worker SUb-chart
+# Discovery Celery Worker Sub-chart
 discovery-celery-worker:
   image:
     repository: "quay.io/quipucords/quipucords"
     tag: "latest"
+    pullPolicy: Always
   ansible:
     remoteTmp: "/var/data/tmp/ansible/remote"
     localTemp: "/var/data/tmp/ansible/local"
 
 # Discovery REDIS Sub-chart
 discovery-redis:
+  image:
+    pullPolicy: IfNotPresent
   service:
     port: 6379
 
 # Discovery PostgreSQL Sub-chart
 discovery-db:
+  image:
+    pullPolicy: IfNotPresent
   service:
     port: 5432
   postgresql:
