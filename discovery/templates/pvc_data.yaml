@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: discovery-data-volume-claim
+  name: {{ .Release.Name }}-discovery-data-volume-claim
   labels:
     {{- include "discovery.labels" . | nindent 4 }}
 spec:

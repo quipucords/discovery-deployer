@@ -33,12 +33,12 @@ spec:
       serviceAccountName: {{ .Values.global.serviceAccountName }}
       restartPolicy: Always
       volumes:
-      - name: discovery-data-volume-claim
+      - name: {{ .Release.Name }}-discovery-data-volume-claim
         persistentVolumeClaim:
-          claimName: discovery-data-volume-claim
-      - name: discovery-log-volume-claim
+          claimName: {{ .Release.Name }}-discovery-data-volume-claim
+      - name: {{ .Release.Name }}-discovery-log-volume-claim
         persistentVolumeClaim:
-          claimName: discovery-log-volume-claim
+          claimName: {{ .Release.Name }}-discovery-log-volume-claim
       containers:
         - name: {{ .Chart.Name }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
@@ -53,9 +53,9 @@ spec:
               type: "RuntimeDefault"
           volumeMounts:
           - mountPath: /var/data
-            name: discovery-data-volume-claim
+            name: {{ .Release.Name }}-discovery-data-volume-claim
           - mountPath: /var/log
-            name: discovery-log-volume-claim
+            name: {{ .Release.Name }}-discovery-log-volume-claim
           env:
             - name: ANSIBLE_REMOTE_TMP
               value: {{ .Values.ansible.remoteTmp }}
