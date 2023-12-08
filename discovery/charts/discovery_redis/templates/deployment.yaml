@@ -29,7 +29,7 @@ spec:
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      serviceAccountName: {{ .Values.global.serviceAccountName }}
+      serviceAccountName: {{ include "discovery.globalServiceAccountName" . }}
       restartPolicy: Always
       securityContext:
         runAsNonRoot: true

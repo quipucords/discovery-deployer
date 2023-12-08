@@ -22,6 +22,9 @@ serviceAccount:
   automount: true
   # Annotations to add to the service account
   annotations: {}
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: ""
 
 podAnnotations: {}
 podLabels: {}
@@ -134,9 +137,9 @@ global:
   # The pullSecret for the discovery
   imagePullSecrets:
   - discovery-pull-secret
-  # The Service Account name for discovery
-  serviceAccountName: "discovery-sa"
   # The path for the Django secret
   djangoSecretPath: "/var/data/secret.txt"
   # The Django App Secret Key
   djangoSecretKey: "ZGV2ZWxvcG1lbnQK"
+  # global Service Account Name suffix
+  serviceAccountNameSuffix: "discovery-sa"

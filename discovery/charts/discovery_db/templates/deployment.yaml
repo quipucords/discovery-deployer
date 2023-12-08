@@ -29,8 +29,8 @@ spec:
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      serviceAccount: {{ .Values.global.serviceAccountName }}
-      serviceAccountName: {{ .Values.global.serviceAccountName }}
+      serviceAccount: {{ include "discovery.globalServiceAccountName" . }}
+      serviceAccountName: {{ include "discovery.globalServiceAccountName" . }}
       restartPolicy: Always
       volumes:
       - name: {{ .Release.Name }}-discovery-data-volume-claim
