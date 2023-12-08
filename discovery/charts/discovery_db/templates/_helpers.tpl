@@ -1,7 +1,7 @@
 {{/*
 Expand the name of the chart.
 */}}
-{{- define "discovery-db.name" -}}
+{{- define "discovery_db.name" -}}
 {{- default .Chart.Name .Values.nameOverride | trunc 63 | trimSuffix "-" }}
 {{- end }}
 
@@ -10,7 +10,7 @@ Create a default fully qualified app name.
 We truncate at 63 chars because some Kubernetes name fields are limited to this (by the DNS naming spec).
 If release name contains chart name it will be used as a full name.
 */}}
-{{- define "discovery-db.fullname" -}}
+{{- define "discovery_db.fullname" -}}
 {{- if .Values.fullnameOverride }}
 {{- .Values.fullnameOverride | trunc 63 | trimSuffix "-" }}
 {{- else }}
@@ -26,16 +26,16 @@ If release name contains chart name it will be used as a full name.
 {{/*
 Create chart name and version as used by the chart label.
 */}}
-{{- define "discovery-db.chart" -}}
+{{- define "discovery_db.chart" -}}
 {{- printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" }}
 {{- end }}
 
 {{/*
 Common labels
 */}}
-{{- define "discovery-db.labels" -}}
-helm.sh/chart: {{ include "discovery-db.chart" . }}
-{{ include "discovery-db.selectorLabels" . }}
+{{- define "discovery_db.labels" -}}
+helm.sh/chart: {{ include "discovery_db.chart" . }}
+{{ include "discovery_db.selectorLabels" . }}
 {{- if .Chart.AppVersion }}
 app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
 {{- end }}
@@ -45,17 +45,17 @@ app.kubernetes.io/managed-by: {{ .Release.Service }}
 {{/*
 Selector labels
 */}}
-{{- define "discovery-db.selectorLabels" -}}
-app.kubernetes.io/name: {{ include "discovery-db.name" . }}
+{{- define "discovery_db.selectorLabels" -}}
+app.kubernetes.io/name: {{ include "discovery_db.name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}
 
 {{/*
 Create the name of the service account to use
 */}}
-{{- define "discovery-db.serviceAccountName" -}}
+{{- define "discovery_db.serviceAccountName" -}}
 {{- if .Values.serviceAccount.create }}
-{{- default (include "discovery-db.fullname" .) .Values.serviceAccount.name }}
+{{- default (include "discovery_db.fullname" .) .Values.serviceAccount.name }}
 {{- else }}
 {{- default "default" .Values.serviceAccount.name }}
 {{- end }}

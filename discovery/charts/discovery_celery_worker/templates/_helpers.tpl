@@ -1,7 +1,7 @@
 {{/*
 Expand the name of the chart.
 */}}
-{{- define "discovery-redis.name" -}}
+{{- define "discovery_celery_worker.name" -}}
 {{- default .Chart.Name .Values.nameOverride | trunc 63 | trimSuffix "-" }}
 {{- end }}
 
@@ -10,7 +10,7 @@ Create a default fully qualified app name.
 We truncate at 63 chars because some Kubernetes name fields are limited to this (by the DNS naming spec).
 If release name contains chart name it will be used as a full name.
 */}}
-{{- define "discovery-redis.fullname" -}}
+{{- define "discovery_celery_worker.fullname" -}}
 {{- if .Values.fullnameOverride }}
 {{- .Values.fullnameOverride | trunc 63 | trimSuffix "-" }}
 {{- else }}
@@ -26,16 +26,16 @@ If release name contains chart name it will be used as a full name.
 {{/*
 Create chart name and version as used by the chart label.
 */}}
-{{- define "discovery-redis.chart" -}}
+{{- define "discovery_celery_worker.chart" -}}
 {{- printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" }}
 {{- end }}
 
 {{/*
 Common labels
 */}}
-{{- define "discovery-redis.labels" -}}
-helm.sh/chart: {{ include "discovery-redis.chart" . }}
-{{ include "discovery-redis.selectorLabels" . }}
+{{- define "discovery_celery_worker.labels" -}}
+helm.sh/chart: {{ include "discovery_celery_worker.chart" . }}
+{{ include "discovery_celery_worker.selectorLabels" . }}
 {{- if .Chart.AppVersion }}
 app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
 {{- end }}
@@ -45,17 +45,17 @@ app.kubernetes.io/managed-by: {{ .Release.Service }}
 {{/*
 Selector labels
 */}}
-{{- define "discovery-redis.selectorLabels" -}}
-app.kubernetes.io/name: {{ include "discovery-redis.name" . }}
+{{- define "discovery_celery_worker.selectorLabels" -}}
+app.kubernetes.io/name: {{ include "discovery_celery_worker.name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}
 
 {{/*
 Create the name of the service account to use
 */}}
-{{- define "discovery-redis.serviceAccountName" -}}
+{{- define "discovery_celery_worker.serviceAccountName" -}}
 {{- if .Values.serviceAccount.create }}
-{{- default (include "discovery-redis.fullname" .) .Values.serviceAccount.name }}
+{{- default (include "discovery_celery_worker.fullname" .) .Values.serviceAccount.name }}
 {{- else }}
 {{- default "default" .Values.serviceAccount.name }}
 {{- end }}

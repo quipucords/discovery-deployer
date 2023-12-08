@@ -78,7 +78,7 @@ affinity: {}
 
 server:
   # The admin user account for the Discovery server.
-  userName: "admin"
+  username: "admin"
   # The password for the admin user account of the Discovery server.
   password: ""
   timeout: "5"
@@ -100,7 +100,7 @@ ansible:
   logLevel: "3"
 
 # Discovery Celery Worker Sub-chart
-discovery-celery-worker:
+discovery_celery_worker:
   image:
     repository: "quay.io/quipucords/quipucords"
     tag: "latest"
@@ -110,14 +110,14 @@ discovery-celery-worker:
     localTemp: "/var/data/tmp/ansible/local"
 
 # Discovery REDIS Sub-chart
-discovery-redis:
+discovery_redis:
   image:
     pullPolicy: IfNotPresent
   service:
     port: 6379
 
 # Discovery PostgreSQL Sub-chart
-discovery-db:
+discovery_db:
   image:
     pullPolicy: IfNotPresent
   service:

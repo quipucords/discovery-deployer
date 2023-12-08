@@ -1,22 +1,29 @@
-# Default values for discovery-db.
+# Default values for discovery_celery_worker.
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
 replicaCount: 1
 
 image:
-  repository: registry.redhat.io/rhel8/postgresql-12
-  pullPolicy: Always
-  # Overrides the image tag whose default is the chart appVersion.
+  # repository and tag supplied by the Parent chart.
+  repository: ""
   tag: ""
+  pullPolicy: Always
 
 imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
 
+autoscaling:
+  enabled: true
+  minReplicas: 3
+  maxReplicas: 32
+  targetCPUUtilizationPercentage: 80
+  targetMemoryUtilizationPercentage: 80
+
 serviceAccount:
   # Specifies whether a service account should be created
-  create: true
+  create: false
   # Automatically mount a ServiceAccount's API credentials?
   automount: true
   # Annotations to add to the service account
@@ -33,7 +40,7 @@ podSecurityContext: {}
 
 service:
   type: ClusterIP
-  port: 5432
+  port: 80
 
 ingress:
   enabled: false

@@ -1,8 +1,10 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ include "discovery-redis.fullname" . }}
+  name: {{ include "discovery_db.fullname" . }}
 spec:
+  selector:
+    {{- include "discovery_db.selectorLabels" . | nindent 4 }}
   type: {{ .Values.service.type }}
   internalTrafficPolicy: Cluster
   ipFamilies:
@@ -11,5 +13,3 @@ spec:
     - port: {{ .Values.service.port}}
       targetPort: {{ .Values.service.port }}
       protocol: TCP
-  selector:
-    {{- include "discovery-redis.selectorLabels" . | nindent 4 }}

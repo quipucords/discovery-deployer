@@ -1,14 +1,14 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "discovery-redis.fullname" . }}
+  name: {{ include "discovery_redis.fullname" . }}
   labels:
-    {{- include "discovery-redis.labels" . | nindent 4 }}
+    {{- include "discovery_redis.labels" . | nindent 4 }}
 spec:
   replicas: 1
   selector:
     matchLabels:
-      {{- include "discovery-redis.selectorLabels" . | nindent 6 }}
+      {{- include "discovery_redis.selectorLabels" . | nindent 6 }}
   strategy:
     type: Recreate
   triggers:
@@ -20,7 +20,7 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       labels:
-        {{- include "discovery-redis.labels" . | nindent 8 }}
+        {{- include "discovery_redis.labels" . | nindent 8 }}
 	{{- with .Values.podLabels }}
         {{- toYaml . | nindent 8 }}
         {{- end }}

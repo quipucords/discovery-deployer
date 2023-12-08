@@ -99,15 +99,15 @@ spec:
             - name: QPC_DBMS
               value: "postgres"
             - name: QPC_DBMS_DATABASE
-              value: {{ index .Values "discovery-db.postgresql.database" }}
+              value: {{ .Values.discovery_db.postgresql.database }}
             - name: QPC_DBMS_HOST
-              value: "discovery-db.${DISCOVERY_NAMESPACE}.svc.cluster.local"
+              value: "discovery_db.${DISCOVERY_NAMESPACE}.svc.cluster.local"
             - name: QPC_DBMS_PASSWORD
-              value: {{ index .Values "discovery-db.postgresql.password" }}
+              value: {{ .Values.discovery_db.postgresql.password }}
             - name: QPC_DBMS_PORT
-              value: {{ index .Values "discovery-db.service.port" }}
+              value: {{ .Values.discovery_db.service.port }}
             - name: QPC_DBMS_USER
-              value: {{ index .Values "discovery-db.postgresql.user" }}
+              value: {{ .Values.discovery_db.postgresql.user }}
             - name: QPC_SERVER_PORT
               value: {{ .Values.service.port }}
             - name: QPC_SERVER_TIMEOUT
@@ -128,7 +128,7 @@ spec:
             - name: QPC_LOG_ALL_ENV_VARS_AT_STARTUP
               value: {{ .Values.server.log.all_env_vars_at_startup }}
             - name: REDIS_HOST
-              value: "discovery-redis.{{ .Release.Namespace }}.svc.cluster.local"
+              value: "discovery_redis.{{ .Release.Namespace }}.svc.cluster.local"
             - name: REDIS_PASSWORD
               value: {{ .Values.global.redisPassword }}
       volumes:
