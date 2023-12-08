@@ -69,7 +69,7 @@ spec:
                 scheme: HTTPS
                 httpHeaders:
                   - name: Host
-                    value: {{ .Values.route.path }}
+                    value: "{{ .Chart.Name }}.{{ .Release.Namespace }}.svc.cluster.local"
               failureThreshold: 5
               initialDelaySeconds: 10
               periodSeconds: 10
@@ -101,7 +101,7 @@ spec:
             - name: QPC_DBMS_DATABASE
               value: {{ .Values.discovery_db.postgresql.database }}
             - name: QPC_DBMS_HOST
-              value: "discovery_db.${DISCOVERY_NAMESPACE}.svc.cluster.local"
+              value: "discovery_db.{{ .Release.Namespace }}.svc.cluster.local"
             - name: QPC_DBMS_PASSWORD
               value: {{ .Values.discovery_db.postgresql.password }}
             - name: QPC_DBMS_PORT

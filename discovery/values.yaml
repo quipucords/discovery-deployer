@@ -40,9 +40,6 @@ securityContext: {}
   # runAsNonRoot: true
   # runAsUser: 1000
 
-route:
-  name: discovery-server
-
 service:
   name: discovery-server
   type: ClusterIP

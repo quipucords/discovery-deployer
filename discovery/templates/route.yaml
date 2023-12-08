@@ -1,9 +1,11 @@
 apiVersion: route.openshift.io/v1
 kind: Route
 metadata:
-  name: {{ .Values.route.name }}
+  name: {{ include "discovery.fullname" . }}
+  labels:
+    {{- include "discovery.labels" . | nindent 4 }}
 spec:
-  host: {{ .Values.route.path }}
+  host: {{ .host }}
   port:
     targetPort: {{ .Values.service.port }}
   tls:
@@ -17,6 +19,7 @@ spec:
   status:
     ingress:
     - conditions:
-      host: {{ .Values.route.path }}
+      host: {{ .host }}
       wildcardPolicy: None
-
+  selector:
+    {{- include "discovery.selectorLabels" . | nindent 4 }}
