@@ -13,7 +13,7 @@ spec:
     insecureEdgeTerminationPolicy: None
   to:
     kind: Service
-    name: {{ .Values.service.name }}
+    name: {{ include "discovery.serverFullname" . }}
     weight: 100
   wildcardPolicy: None
   status:
