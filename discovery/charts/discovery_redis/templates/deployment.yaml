@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "discovery_redis.fullname" . }}
+  name: {{ include "discovery_redis.fullname" . | replace "_" "-" }}
   labels:
     {{- include "discovery_redis.labels" . | nindent 4 }}
 spec:
@@ -39,7 +39,7 @@ spec:
         seccompProfile:
           type: "RuntimeDefault"
       containers:
-        - name: {{ .Chart.Name }}
+        - name: {{ .Chart.Name | replace "_" "-" }}
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"

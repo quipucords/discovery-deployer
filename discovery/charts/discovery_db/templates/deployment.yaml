@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "discovery_db.fullname" . }}
+  name: {{ include "discovery_db.fullname" . | replace "_" "-" }}
   labels:
     {{- include "discovery_db.labels" . | nindent 4 }}
 spec:
@@ -37,7 +37,7 @@ spec:
         persistentVolumeClaim:
           claimName: {{ .Release.Name }}-discovery-data-volume-claim
       containers:
-        - name: {{ .Chart.Name }}
+        - name: {{ .Chart.Name | replace "_" "-" }}
           securityContext:
             runAsNonRoot: true
             allowPrivilegeEscalation: false

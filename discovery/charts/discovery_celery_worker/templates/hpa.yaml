@@ -2,7 +2,7 @@
 apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
-  name: {{ include "discovery_celery_worker.fullname" . }}
+  name: {{ include "discovery_celery_worker.fullname" . | replace "_" "-" }}
   labels:
     {{- include "discovery_celery_worker.labels" . | nindent 4 }}
 spec:

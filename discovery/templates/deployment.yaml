@@ -88,7 +88,7 @@ spec:
             - name: ANSIBLE_LOCAL_TEMP
               value: {{ .Values.ansible.localTemp }}
             - name: ANSIBLE_LOG_LEVEL
-              value: {{ .Values.ansible.logLevel }}
+              value: {{ .Values.ansible.logLevel | quote }}
             - name: DJANGO_SECRET_PATH
               value: {{ .Values.global.djangoSecretPath }}
             - name: DJANGO_SECRET_KEY
@@ -105,13 +105,13 @@ spec:
             - name: QPC_DBMS_PASSWORD
               value: {{ .Values.discovery_db.postgresql.password }}
             - name: QPC_DBMS_PORT
-              value: {{ .Values.discovery_db.service.port }}
+              value: {{ .Values.discovery_db.service.port | quote }}
             - name: QPC_DBMS_USER
               value: {{ .Values.discovery_db.postgresql.user }}
             - name: QPC_SERVER_PORT
-              value: {{ .Values.service.port }}
+              value: {{ .Values.service.port | quote }}
             - name: QPC_SERVER_TIMEOUT
-              value: {{ .Values.server.timeout }}
+              value: {{ .Values.server.timeout | quote }}
             - name: QPC_SERVER_USERNAME
               value: {{ .Values.server.username }}
             - name: QPC_SERVER_PASSWORD
@@ -120,13 +120,13 @@ spec:
                   key: server-password
                   name: discovery-secrets
             - name: NETWORK_CONNECT_JOB_TIMEOUT
-              value: {{ .Values.network.connect.job_timeout }}
+              value: {{ .Values.network.connect.job_timeout | quote}}
             - name: NETWORK_INSPECT_JOB_TIMEOUT
-              value: {{ .Values.network.inspect.job_timeout }}
+              value: {{ .Values.network.inspect.job_timeout | quote}}
             - name: QPC_DEBUGPY
-              value: {{ .Values.server.debugpy }}
+              value: {{ .Values.server.debugpy | quote }}
             - name: QPC_LOG_ALL_ENV_VARS_AT_STARTUP
-              value: {{ .Values.server.log.all_env_vars_at_startup }}
+              value: {{ .Values.server.log.all_env_vars_at_startup | quote }}
             - name: REDIS_HOST
               value: "discovery_redis.{{ .Release.Namespace }}.svc.cluster.local"
             - name: REDIS_PASSWORD

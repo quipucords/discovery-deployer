@@ -5,7 +5,7 @@ metadata:
   labels:
     {{- include "discovery.labels" . | nindent 4 }}
 spec:
-  accessMdoes:
+  accessModes:
   - ReadWriteMany
   volumeMode: Filesystem
   resources:

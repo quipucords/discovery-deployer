@@ -43,7 +43,7 @@ securityContext: {}
 service:
   name: discovery-server
   type: ClusterIP
-  port: 8443
+  port: "8443"
 
 ingress:
   enabled: false
@@ -114,14 +114,14 @@ discovery_redis:
   image:
     pullPolicy: IfNotPresent
   service:
-    port: 6379
+    port: "6379"
 
 # Discovery PostgreSQL Sub-chart
 discovery_db:
   image:
     pullPolicy: IfNotPresent
   service:
-    port: 5432
+    port: "5432"
   postgresql:
     database: "qpc"
     user: "qpc"
@@ -133,7 +133,7 @@ global:
   redisPassword: "qpc"
   # The pullSecret for the discovery
   imagePullSecrets:
-  - discovery-pull-secret
+  - name: discovery-pull-secret
   # The path for the Django secret
   djangoSecretPath: "/var/data/secret.txt"
   # The Django App Secret Key
