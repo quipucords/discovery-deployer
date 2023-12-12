@@ -101,7 +101,7 @@ spec:
             - name: QPC_DBMS_DATABASE
               value: {{ .Values.discovery_db.postgresql.database }}
             - name: QPC_DBMS_HOST
-              value: {{ include "discovery.fullname" . }}-discovery-db.{{ .Release.Namespace }}.svc.cluster.local
+              value: {{ include "discovery.db-host" . }}
             - name: QPC_DBMS_PASSWORD
               value: {{ .Values.discovery_db.postgresql.password }}
             - name: QPC_DBMS_PORT
@@ -128,7 +128,7 @@ spec:
             - name: QPC_LOG_ALL_ENV_VARS_AT_STARTUP
               value: {{ .Values.server.log.all_env_vars_at_startup | quote }}
             - name: REDIS_HOST
-              value: {{ include "discovery.fullname" . }}-discovery-redis.{{ .Release.Namespace }}.svc.cluster.local
+              value: {{ include "discovery.redis-host" . }}
             - name: REDIS_PASSWORD
               value: {{ .Values.global.redisPassword }}
       volumes:
