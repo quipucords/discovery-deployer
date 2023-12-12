@@ -2,9 +2,6 @@
 
 replicaCount: 1
 
-# The externally accessible URL for the Discovery server.
-applicationDomain: "discovery-server-discovery.apps-crc.testing"
-
 image:
   repository: "quay.io/quipucords/quipucords"
   tag: "latest"
@@ -100,7 +97,7 @@ ansible:
   logLevel: "3"
 
 # Discovery Celery Worker Sub-chart
-discovery_celery_worker:
+celery_worker:
   image:
     repository: "quay.io/quipucords/quipucords"
     tag: "latest"
@@ -110,14 +107,14 @@ discovery_celery_worker:
     localTemp: "/var/data/tmp/ansible/local"
 
 # Discovery REDIS Sub-chart
-discovery_redis:
+redis:
   image:
     pullPolicy: IfNotPresent
   service:
     port: "6379"
 
 # Discovery PostgreSQL Sub-chart
-discovery_db:
+db:
   image:
     pullPolicy: IfNotPresent
   service:

@@ -1,25 +1,18 @@
-# Default values for discovery_celery_worker.
+# Default values for db.
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
 replicaCount: 1
 
 image:
-  # repository and tag supplied by the Parent chart.
-  repository: ""
-  tag: ""
+  repository: registry.redhat.io/rhel8/postgresql-12
   pullPolicy: Always
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: "latest"
 
 imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
-
-autoscaling:
-  enabled: true
-  minReplicas: 3
-  maxReplicas: 32
-  targetCPUUtilizationPercentage: 80
-  targetMemoryUtilizationPercentage: 80
 
 serviceAccount:
   # Specifies whether a service account should be created
@@ -40,7 +33,7 @@ podSecurityContext: {}
 
 service:
   type: ClusterIP
-  port: 80
+  port: 5432
 
 ingress:
   enabled: false

@@ -99,15 +99,15 @@ spec:
             - name: QPC_DBMS
               value: "postgres"
             - name: QPC_DBMS_DATABASE
-              value: {{ .Values.discovery_db.postgresql.database }}
+              value: {{ .Values.db.postgresql.database }}
             - name: QPC_DBMS_HOST
               value: {{ include "discovery.db-host" . }}
             - name: QPC_DBMS_PASSWORD
-              value: {{ .Values.discovery_db.postgresql.password }}
+              value: {{ .Values.db.postgresql.password }}
             - name: QPC_DBMS_PORT
-              value: {{ .Values.discovery_db.service.port | quote }}
+              value: {{ .Values.db.service.port | quote }}
             - name: QPC_DBMS_USER
-              value: {{ .Values.discovery_db.postgresql.user }}
+              value: {{ .Values.db.postgresql.user }}
             - name: QPC_SERVER_PORT
               value: {{ .Values.service.port | quote }}
             - name: QPC_SERVER_TIMEOUT

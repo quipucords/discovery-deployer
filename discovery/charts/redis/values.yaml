@@ -1,16 +1,15 @@
-# Default values for discovery_db.
+# Default values for redis.
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
 replicaCount: 1
 
 image:
-  repository: registry.redhat.io/rhel8/postgresql-12
+  repository: "registry.redhat.io/rhel9/redis-6"
   pullPolicy: Always
   # Overrides the image tag whose default is the chart appVersion.
   tag: "latest"
 
-imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
 
@@ -25,6 +24,9 @@ serviceAccount:
   # If not set and create is true, a name is generated using the fullname template
   name: ""
 
+ingress:
+  enabled: false
+
 podAnnotations: {}
 podLabels: {}
 
@@ -33,23 +35,7 @@ podSecurityContext: {}
 
 service:
   type: ClusterIP
-  port: 5432
-
-ingress:
-  enabled: false
-  className: ""
-  annotations: {}
-    # kubernetes.io/ingress.class: nginx
-    # kubernetes.io/tls-acme: "true"
-  hosts:
-    - host: chart-example.local
-      paths:
-        - path: /
-          pathType: ImplementationSpecific
-  tls: []
-  #  - secretName: chart-example-tls
-  #    hosts:
-  #      - chart-example.local
+  port: 6379
 
 resources: {}
   # We usually recommend not to specify default resources and to leave this as a conscious
@@ -62,10 +48,4 @@ resources: {}
   # requests:
   #   cpu: 100m
   #   memory: 128Mi
-
-nodeSelector: {}
-
-tolerations: []
-
-affinity: {}
 
