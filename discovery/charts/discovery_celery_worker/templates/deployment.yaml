@@ -59,7 +59,7 @@ spec:
           env:
             - name: ANSIBLE_REMOTE_TMP
               value: {{ .Values.ansible.remoteTmp }}
-            - name: ANSIBLE_LOCAL_TMP
+            - name: ANSIBLE_LOCAL_TEMP
               value: {{ .Values.ansible.localTemp }}
             - name: DJANGO_SECRET_PATH
               value: {{ .Values.global.djangoSecretPath }}
