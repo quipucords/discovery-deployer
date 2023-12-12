@@ -135,5 +135,3 @@ global:
   djangoSecretPath: "/var/data/secret.txt"
   # The Django App Secret Key
   djangoSecretKey: "ZGV2ZWxvcG1lbnQK"
-  # global Service Account Name suffix
-  serviceAccountNameSuffix: "discovery-sa"
