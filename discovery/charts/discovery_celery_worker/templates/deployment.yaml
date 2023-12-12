@@ -69,6 +69,6 @@ spec:
                   key: django-secret-key
                   name: discovery-secrets
             - name: REDIS_HOST
-              value: "discovery_redis.{{ .Release.Namespace }}.svc.cluster.local"
+              value: {{ include "discovery.fullname" . }}-discovery-redis.{{ .Release.Namespace }}.svc.cluster.local"
             - name: REDIS_PASSWORD
               value: {{  .Values.global.redisPassword }}
