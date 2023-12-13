@@ -26,16 +26,13 @@ serviceAccount:
 podAnnotations: {}
 podLabels: {}
 
-podSecurityContext: {}
-  # fsGroup: 2000
-
-securityContext: {}
-  # capabilities:
-  #   drop:
-  #   - ALL
-  # readOnlyRootFilesystem: true
-  # runAsNonRoot: true
-  # runAsUser: 1000
+podSecurityContext:
+  runAsNonRoot: true
+  allowPrivilegeEscalation: false
+  capabilities:
+    drop: ["ALL"]
+  seccompProfile:
+    type: "RuntimeDefault"
 
 service:
   name: discovery-server
@@ -102,6 +99,13 @@ celery_worker:
     repository: "quay.io/quipucords/quipucords"
     tag: "latest"
     pullPolicy: Always
+  podSecurityContext:
+    runAsNonRoot: true
+    allowPrivilegeEscalation: false
+    capabilities:
+      drop: ["ALL"]
+    seccompProfile:
+      type: "RuntimeDefault"
   ansible:
     remoteTmp: "/var/data/tmp/ansible/remote"
     localTemp: "/var/data/tmp/ansible/local"
@@ -110,6 +114,13 @@ celery_worker:
 redis:
   image:
     pullPolicy: IfNotPresent
+  podSecurityContext:
+    runAsNonRoot: true
+    allowPrivilegeEscalation: false
+    capabilities:
+      drop: ["ALL"]
+    seccompProfile:
+      type: "RuntimeDefault"
   service:
     port: "6379"
 
@@ -117,6 +128,13 @@ redis:
 db:
   image:
     pullPolicy: IfNotPresent
+  podSecurityContext:
+    runAsNonRoot: true
+    allowPrivilegeEscalation: false
+    capabilities:
+      drop: ["ALL"]
+    seccompProfile:
+      type: "RuntimeDefault"
   service:
     port: "5432"
   postgresql:

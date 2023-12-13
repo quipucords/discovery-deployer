@@ -13,8 +13,6 @@ spec:
       {{- include "discovery.selectorLabels" . | nindent 6 }}
   strategy:
     type: Recreate
-  triggers:
-    - type: ConfigChange
   template:
     metadata:
       {{- with .Values.podAnnotations }}
@@ -33,24 +31,15 @@ spec:
       {{- end }}
       restartPolicy: Always
       serviceAccountName: {{ include "discovery.globalServiceAccountName" . }}
-      securityContext:
-        {{- toYaml .Values.podSecurityContext | nindent 8 }}
       containers:
         - name: {{ include "discovery.serverFullname" . }}
-          securityContext:
-            {{- toYaml .Values.securityContext | nindent 12 }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
             - containerPort: {{ .Values.service.port }}
               protocol: TCP
           securityContext:
-            runAsNonRoot: true
-            allowPrivilegeEscalation: false
-            capabilities:
-              drop: ["ALL"]
-            seccompProfile:
-              type: "RuntimeDefault"
+            {{- toYaml .Values.podSecurityContext | nindent 12 }}
           livenessProbe:
               exec:
                 command:

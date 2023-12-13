@@ -11,8 +11,6 @@ spec:
       {{- include "celery_worker.selectorLabels" . | nindent 6 }}
   strategy:
     type: Recreate
-  triggers:
-  - type: ConfigChange
   template:
     metadata:
       {{- with .Values.podAnnotations }}
@@ -45,12 +43,7 @@ spec:
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           command: [ "/bin/sh", "-c", "/deploy/entrypoint_celery_worker.sh" ]
           securityContext:
-            runAsNonRoot: true
-            allowPrivilegeEscalation: false
-            capabilities:
-              drop: ["ALL"]
-            seccompProfile:
-              type: "RuntimeDefault"
+            {{- toYaml .Values.podSecurityContext | nindent 12 }}
           volumeMounts:
           - mountPath: /var/data
             name: {{ .Release.Name }}-data-volume-claim

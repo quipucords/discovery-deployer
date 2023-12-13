@@ -11,8 +11,6 @@ spec:
       {{- include "db.selectorLabels" . | nindent 6 }}
   strategy:
     type: Recreate
-  triggers:
-  - type: ConfigChange
   template:
     metadata:
       {{- with .Values.podAnnotations }}
@@ -39,12 +37,7 @@ spec:
       containers:
         - name: {{ .Chart.Name }}
           securityContext:
-            runAsNonRoot: true
-            allowPrivilegeEscalation: false
-            capabilities:
-              drop: ["ALL"]
-            seccompProfile:
-              type: "RuntimeDefault"
+            {{- toYaml .Values.podSecurityContext | nindent 12 }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
