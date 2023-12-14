@@ -14,6 +14,9 @@ install:
 install-instance:
 	@helm install --generate-name ./discovery
 
+lint:
+	@helm lint ./discovery
+
 ls:
 	@helm list --filter '^discovery'
 
@@ -28,6 +31,7 @@ help:
 	@echo "  dry-run           Does a dry-run Installation and sends generated object to standard output."
 	@echo "  install           Installs Discovery onto the current namespace."
 	@echo "  install-instance  Installs Discovery with a unique name onto the current namespace."
+	@echo "  lint              Run Lint against the Discovery Chart"
 	@echo "  ls                Show the installed Discovery helm charts."
 	@echo "  uninstall         Uninstalls Discovery from the current namespace."
 
