@@ -1,6 +1,6 @@
 apiVersion: v2
 name: discovery
-description: A Helm chart for Kubernetes
+description: The RedHat Product Discovery tool is designed to help users collect data about their usage of specific Red Hat software.
 
 # A chart can be either an 'application' or a 'library' chart.
 #
@@ -22,3 +22,15 @@ version: 1.0.0
 # follow Semantic Versioning. They should reflect the version the application is using.
 # It is recommended to use it with quotes.
 appVersion: "1.4.0"
+
+# The Discovery Product Icon
+icon: https://abellotti.github.io/quipucords-helm-repo/charts/discovery/icon.png
+
+# The Chart dependencies
+dependencies:
+  - name: db
+    version: 1.0.0
+  - name: redis
+    version: 1.0.0
+  - name: celery_worker
+    version: 1.0.0
