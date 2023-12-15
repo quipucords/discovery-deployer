@@ -98,7 +98,7 @@ ansible:
   logLevel: "3"
 
 # Discovery Celery Worker Sub-chart
-celery_worker:
+celery-worker:
   image:
     repository: "quay.io/quipucords/quipucords"
     tag: "latest"

@@ -2,14 +2,14 @@
 apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
-  name: {{ include "celery_worker.fullname" . | replace "_" "-" }}
+  name: {{ include "celery-worker.fullname" . }}
   labels:
-    {{- include "celery_worker.labels" . | nindent 4 }}
+    {{- include "celery-worker.labels" . | nindent 4 }}
 spec:
   scaleTargetRef:
     apiVersion: apps/v1
     kind: Deployment
-    name: {{ include "celery_worker.fullname" . }}
+    name: {{ include "celery-worker.fullname" . }}
   minReplicas: {{ .Values.autoscaling.minReplicas }}
   maxReplicas: {{ .Values.autoscaling.maxReplicas }}
   metrics:
