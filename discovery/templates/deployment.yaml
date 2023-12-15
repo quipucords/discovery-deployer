@@ -109,13 +109,13 @@ spec:
                   key: server-password
                   name: {{ .Release.Name }}-secrets
             - name: NETWORK_CONNECT_JOB_TIMEOUT
-              value: {{ .Values.network.connect.job_timeout | quote}}
+              value: {{ .Values.network.connect.jobTimeout | quote}}
             - name: NETWORK_INSPECT_JOB_TIMEOUT
-              value: {{ .Values.network.inspect.job_timeout | quote}}
+              value: {{ .Values.network.inspect.jobTimeout | quote}}
             - name: QPC_DEBUGPY
               value: {{ .Values.server.debugpy | quote }}
             - name: QPC_LOG_ALL_ENV_VARS_AT_STARTUP
-              value: {{ .Values.server.log.all_env_vars_at_startup | quote }}
+              value: {{ .Values.server.log.allEnvVarsAtStartup | quote }}
             - name: REDIS_HOST
               value: {{ include "discovery.redis-host" . }}
             - name: REDIS_PASSWORD

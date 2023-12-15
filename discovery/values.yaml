@@ -82,13 +82,13 @@ server:
   timeout: "5"
   debugpy: "1"
   log:
-    all_env_vars_at_startup: "False"
+    allEnvVarsAtStartup: "False"
 
 network:
   connect:
-    job_timeout: "6"
+    jobTimeout: "6"
   inspect:
-    job_timeout: "600"
+    jobTimeout: "600"
 
 ansible:
   # The path for the ansible remote temp directory (overrides /.ansible/tmp).
