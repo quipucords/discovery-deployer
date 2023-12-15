@@ -73,8 +73,12 @@ affinity: {}
 server:
   # The admin user account for the Discovery server.
   username: "admin"
+  # The following variables are required if the current secret does not exist
+  # and needs to be created upon initial deployment.
   # The password for the admin user account of the Discovery server.
-  password: ""
+  password: null
+  # The Django App secret key
+  djangoSecretKey: "development"
   timeout: "5"
   debugpy: "1"
   log:
@@ -151,5 +155,3 @@ global:
   - name: discovery-pull-secret
   # The path for the Django secret
   djangoSecretPath: "/var/data/secret.txt"
-  # The Django App Secret Key
-  djangoSecretKey: "ZGV2ZWxvcG1lbnQK"

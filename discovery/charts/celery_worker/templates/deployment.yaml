@@ -60,7 +60,7 @@ spec:
               valueFrom:
                 secretKeyRef:
                   key: django-secret-key
-                  name: discovery-secrets
+                  name: {{ .Release.Name }}-secrets
             - name: REDIS_HOST
               value: {{ include "discovery.redis-host" . }}
             - name: REDIS_PASSWORD

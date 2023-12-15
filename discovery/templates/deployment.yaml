@@ -84,7 +84,7 @@ spec:
               valueFrom:
                 secretKeyRef:
                   key: django-secret-key
-                  name: discovery-secrets
+                  name: {{ .Release.Name }}-secrets
             - name: QPC_DBMS
               value: "postgres"
             - name: QPC_DBMS_DATABASE
@@ -107,7 +107,7 @@ spec:
               valueFrom:
                 secretKeyRef:
                   key: server-password
-                  name: discovery-secrets
+                  name: {{ .Release.Name }}-secrets
             - name: NETWORK_CONNECT_JOB_TIMEOUT
               value: {{ .Values.network.connect.job_timeout | quote}}
             - name: NETWORK_INSPECT_JOB_TIMEOUT
