@@ -86,9 +86,9 @@ server:
 
 network:
   connect:
-    jobTimeout: "6"
+    jobTimeout: 6
   inspect:
-    jobTimeout: "600"
+    jobTimeout: 600
 
 ansible:
   # The path for the ansible remote temp directory (overrides /.ansible/tmp).
@@ -113,6 +113,8 @@ celery-worker:
   ansible:
     remoteTmp: "/var/data/tmp/ansible/remote"
     localTemp: "/var/data/tmp/ansible/local"
+  autoscaling:
+    minReplicas: 3
 
 # Discovery REDIS Sub-chart
 redis:
