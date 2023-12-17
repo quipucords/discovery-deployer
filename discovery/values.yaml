@@ -4,7 +4,7 @@ replicaCount: 1
 
 image:
   repository: "quay.io/quipucords/quipucords"
-  tag: "latest"
+  tag: "1.4.5"
   pullPolicy: Always
 
 # The image for the Discovery server
@@ -80,7 +80,8 @@ server:
   # The Django App secret key
   djangoSecretKey: "development"
   timeout: "5"
-  debugpy: "1"
+  # For production tags (not latest), we want debugpy disabled.
+  debugpy: "0"
   log:
     allEnvVarsAtStartup: "False"
 
@@ -101,7 +102,7 @@ ansible:
 celery-worker:
   image:
     repository: "quay.io/quipucords/quipucords"
-    tag: "latest"
+    tag: "1.4.5"
     pullPolicy: Always
   podSecurityContext:
     runAsNonRoot: true
@@ -165,4 +166,4 @@ global:
   # The path for the Django secret
   djangoSecretPath: "/var/data/secret.txt"
   # Enable Celery Scan Manager
-  enableCeleryScanManager: "1"
+  enableCeleryScanManager: "0"

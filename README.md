@@ -61,8 +61,8 @@ Note that `helm list` will show the installed Charts in the namespace:
 ```
 $ helm list
 NAME                	NAMESPACE     	REVISION	UPDATED                             	STATUS  	CHART          	APP VERSION
-discovery-1702314666	discovery-helm	1       	2023-12-11 12:11:07.898808 -0500 EST	deployed	discovery-1.0.0	1.4.0
-discovery-1702314671	discovery-helm	1       	2023-12-11 12:11:11.442539 -0500 EST	deployed	discovery-1.0.0	1.4.0
+discovery-1702314666	discovery-helm	1       	2023-12-11 12:11:07.898808 -0500 EST	deployed	discovery-0.9.1	1.4.5
+discovery-1702314671	discovery-helm	1       	2023-12-11 12:11:11.442539 -0500 EST	deployed	discovery-0.9.1	1.4.5
 ```
 
 Note, by default the Discovery Django secret key used is `development`, for production, an alternate secret key should be used. The Django secret key gets stored with the `discovery-secrets` and should be specified at initial deployment as follows:
