@@ -164,3 +164,5 @@ global:
   - name: discovery-pull-secret
   # The path for the Django secret
   djangoSecretPath: "/var/data/secret.txt"
+  # Enable Celery Scan Manager
+  enableCeleryScanManager: "1"

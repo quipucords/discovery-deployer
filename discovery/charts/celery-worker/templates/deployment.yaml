@@ -87,4 +87,6 @@ spec:
             - name: REDIS_HOST
               value: {{ include "discovery.redis-host" . }}
             - name: REDIS_PASSWORD
-              value: {{  .Values.global.redisPassword }}
+              value: {{ .Values.global.redisPassword }}
+            - name: QPC_ENABLE_CELERY_SCAN_MANAGER
+              value: {{ .Values.global.enableCeleryScanManager | quote }}
