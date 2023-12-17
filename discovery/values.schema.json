@@ -10,6 +10,7 @@
                         "null"
                     ],
                     "minLength": 10,
+                    "pattern": "^.*[a-zA-Z]+.*$",
                     "not": {
                         "enum": [
                             "qpcpassw0rd",
