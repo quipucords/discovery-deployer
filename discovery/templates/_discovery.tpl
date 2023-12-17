@@ -9,19 +9,19 @@ Define the global Service Account name to use for Discovery and its subcharts.
 Define the full name of the discovery server
 */}}
 {{- define "discovery.serverFullname" -}}
-{{- printf "%s-server" (include "discovery.fullname" .) }}
+{{- printf "%s-server" .Release.Name }}
 {{- end }}
 
 {{/*
 Define the cluster local fully qualified host for the database
 */}}
 {{- define "discovery.db-host" -}}
-{{ printf "%s-db.%s.svc.cluster.local" (include "discovery.fullname" . ) (.Release.Namespace) }}
+{{ printf "%s-db.%s.svc.cluster.local" (.Release.Name) (.Release.Namespace) }}
 {{- end }}
 
 {{/*
 Define the cluster local fully qualified host for redis
 */}}
 {{- define "discovery.redis-host" -}}
-{{ printf "%s-redis.%s.svc.cluster.local" (include "discovery.fullname" . ) (.Release.Namespace) }}
+{{ printf "%s-redis.%s.svc.cluster.local" (.Release.Name) (.Release.Namespace) }}
 {{- end }}

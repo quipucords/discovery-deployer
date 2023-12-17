@@ -49,6 +49,29 @@ spec:
             name: {{ .Release.Name }}-data-volume-claim
           - mountPath: /var/log
             name: {{ .Release.Name }}-log-volume-claim
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          livenessProbe:
+            exec:
+              command:
+                - /bin/sh
+                - -c
+                - 'ps axo command | grep -v grep | grep /opt/venv/bin/python | grep worker'
+            initialDelaySeconds: 30
+            timeoutSeconds: 5
+            periodSeconds: 5
+            failureThreshold: 5
+            successThreshold: 1
+          readinessProbe:
+            exec:
+              command:
+                - /bin/sh
+                - -c
+                - 'ps axo command | grep -v grep | grep /opt/venv/bin/python | grep worker'
+            initialDelaySeconds: 20
+            timeoutSeconds: 5
+            periodSeconds: 3
+            successThreshold: 1
           env:
             - name: ANSIBLE_REMOTE_TMP
               value: {{ .Values.ansible.remoteTmp }}
