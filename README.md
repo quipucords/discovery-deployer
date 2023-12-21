@@ -1,3 +1,9 @@
+#### Quipucords Deployer is now archived in favor of using the Quipucords Helm Chart for deploying Discovery to OpenShift and Kubernetes Clusters.
+See:
+#### Discovery Helm Chart - https://quipucords/quipucords-helm-chart
+#### Discovery Helm Repo - https://quipucords/quipucords-helm-repo
+
+
 # Quipucords Deployer
 Script and template for deploying the Discovery product to OpenShift.
 
